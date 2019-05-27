@@ -33,7 +33,7 @@ Seja paciente e espere seu saldo em TUSD e USDT aumentar.
 ## Nota
 O bot pode parar repentinamente, isso alguém deve pensar em alguma solução.
 
-##Créditos
+## Créditos
 Ideia inicial @usdkhey
 
 ## Licença
