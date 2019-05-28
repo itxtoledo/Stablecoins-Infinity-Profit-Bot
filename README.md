@@ -36,5 +36,9 @@ O bot pode parar repentinamente, isso alguém deve pensar em alguma solução.
 ## Créditos
 Ideia inicial @usdkhey
 
+## Comunidade
+Participe de nossa comunidade no WhatsApp: https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO
+ou no Telegram: https://t.me/bitragem
+
 ## Licença
 [MIT](https://choosealicense.com/licenses/mit/)
