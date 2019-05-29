@@ -20,7 +20,8 @@ npm install
 
 ## Utilização
 
-Ter mais de US $20 em sua conta da Binance
+Ter mais de US $20 em sua conta da Binance.
+Gere uma API, se n'ao souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
 
 Ainda na pasta do Bot
 
@@ -32,6 +33,16 @@ Seja paciente e espere seu saldo em TUSD e USDT aumentar.
 
 ## Nota
 O bot pode parar repentinamente, isso alguém deve pensar em alguma solução.
+
+## Créditos
+Ideia inicial @usdkhey
+
+## Comunidade
+Participe de nossa comunidade no WhatsApp: https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO
+ou no Telegram: https://t.me/bitragem
+
+## Patrocinadores
+Tiago A Boaventura 28/05/2019
 
 ## Licença
 [MIT](https://choosealicense.com/licenses/mit/)

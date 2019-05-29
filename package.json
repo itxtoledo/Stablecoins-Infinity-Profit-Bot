@@ -1,14 +1,26 @@
 {
   "name": "tusd-usdt-infinity-profit-bot",
   "version": "1.0.0",
-  "description": "make infinity money with tusd and usdt",
+  "description": "Make infinity money with TUSD and USDT",
   "main": "main.js",
+  "repository": "github:itxtoledo/TUSD-USDT-Infinity-Profit-Bot",
   "scripts": {
     "start": "node main.js"
   },
-  "author": "itxtoledo",
-  "license": "ISC",
+  "author": {
+    "name": "Gustavo Toledo",
+    "email": "gustavo@obex.pw",
+    "url": "https://obex.pw"
+  },
+  "license": "MIT",
   "dependencies": {
     "node-binance-api": "^0.9.1"
-  }
+  },
+  "keywords": [
+    "javascript",
+    "nodejs",
+    "binance",
+    "tusd",
+    "usdt"
+  ]
 }
