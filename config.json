@@ -1,7 +1,10 @@
 {
     "API_KEY": "",
     "SECRET_KEY": "",
+    "CURRENCY": "USDC",
+    "MARKET" : "USDT",
+    "SPREAD" : 0.0011,
     "BUY_PRICE": 0.9985,
     "SELL_PRICE": 1.0030,
-    "INITIAL_INVESTMENT": 240.20180513
+    "INITIAL_INVESTMENT": 0
 }
