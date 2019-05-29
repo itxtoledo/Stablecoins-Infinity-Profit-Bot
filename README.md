@@ -41,5 +41,8 @@ Ideia inicial @usdkhey
 Participe de nossa comunidade no WhatsApp: https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO
 ou no Telegram: https://t.me/bitragem
 
+## Patrocinadores
+Tiago A Boaventura 28/05/2019
+
 ## Licença
 [MIT](https://choosealicense.com/licenses/mit/)
