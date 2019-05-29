@@ -20,7 +20,8 @@ npm install
 
 ## Utilização
 
-Ter mais de US $20 em sua conta da Binance
+Ter mais de US $20 em sua conta da Binance.
+Gere uma API, se n'ao souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
 
 Ainda na pasta do Bot
 
