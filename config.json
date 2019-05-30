@@ -3,8 +3,6 @@
     "SECRET_KEY": "",
     "CURRENCY": "USDC",
     "MARKET" : "USDT",
-    "SPREAD" : 0.0011,
-    "BUY_PRICE": 0.9985,
-    "SELL_PRICE": 1.0030,
-    "INITIAL_INVESTMENT": 20
+    "SPREAD" : 0.0025,
+    "INITIAL_INVESTMENT": 0
 }

@@ -1,14 +1,11 @@
 var config = require('./config.json')
-var binance = require('node-binance-api')().options({
-    APIKEY: config.API_KEY,
-    APISECRET: config.SECRET_KEY,
-    useServerTime: true
-});
+const axios = require('axios');
 
-binance.openOrders("TUSDTUSDT", (error, openOrders, symbol) => {
-  console.log("openOrders("+symbol+")", openOrders);
-}).then((openOrders) => {
-    console.log(openOrders);
-}).catch((err) => {
-    console.log(err);
-});
+axios.get('https://api.binance.com/api/v3/avgPrice', {
+        params: {
+            symbol: config.CURRENCY + config.MARKET
+        }
+    })
+        .then(function (response) {
+          console.log(response)
+         })
