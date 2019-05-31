@@ -31,19 +31,19 @@ npm install
 
 ## Utilização
 
-Ter mais de US $20 em sua conta da Binance na moeda do mercado selecionado. 
+1. Ter mais de US $20 em sua conta da Binance na moeda do mercado selecionado. 
 
 Nota:
 
 No arquivo config.json você encontrará o mercado USDT, caso queira negociar neste mercado você deverá comprar Tether antes de ligar o BOT.
 
-Gere uma API, se não souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
+2. Gere uma API, se não souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
 
-Coloque a API nos campos do arquivo config.json
+3. Coloque a API nos campos do arquivo config.json
 
-Cancele todas as ordens que estiverem abertas no par que você for negociar
+4. Cancele todas as ordens que estiverem abertas no par que você for negociar
 
-Inicie o BOT na pasta dele
+5. Inicie o BOT na pasta dele
 
 ```bash
 npm start
