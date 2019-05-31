@@ -46,28 +46,35 @@ setInterval(() => {
 }, 15000);
 
 function simpleStrategy(balances) {
-    var spread = config.SPREAD;
-    buy = avgPrice * (1 - spread);
-    sell = avgPrice * (1 + spread);
-    buy = buy.toFixed(4);
-    sell = sell.toFixed(4);
+    if ( hasBought == false ){
+        buy = avgPrice * (1 - config.SPREAD);
+        sell = avgPrice * (1 + config.SPREAD);
+        buy = buy.toFixed(4);
+        sell = sell.toFixed(4);
+    }
     try {
         binance.prevDay("BTC" + config.MARKET, (error, prevDay, symbol) => {
             console.log("BTC" + config.MARKET + "......:", prevDay.lastPrice);
             console.log("DEFINIDOS....: Compra " + buy + " e Venda " + sell);
             if (balances[config.MARKET].available > 20) {
-                totalCompras++;
                 try {
+                    totalCompras++;
+                    hasBought = true;
                     binance.buy(config.CURRENCY + config.MARKET, ((balances[config.MARKET].available - 0.1) / buy).toFixed(2), buy);
                 } catch (e) {
+                    totalCompras--;
+                    hasBought = false;
                     throw e;
                 }
             }
             if (balances[config.CURRENCY].available > 20) {
-                totalVendas++;
                 try {
+                    totalVendas++;
+                    hasBought = false;
                     binance.sell(config.CURRENCY + config.MARKET, (balances[config.CURRENCY].available - 0.1).toFixed(2), sell);
                 } catch (e) {
+                    totalVendas--;
+                    hasBought = true;
                     throw e;
                 }
             }
@@ -80,7 +87,7 @@ function simpleStrategy(balances) {
 
 function start() {
     console.clear();
-    ciclosRealizados = 0;
+    hasBought = false;
     startTime = Math.floor(+new Date() / 1000);
     totalCompras = 0;
     totalVendas = 0;
