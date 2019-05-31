@@ -46,7 +46,7 @@ setInterval(() => {
 }, 15000);
 
 function simpleStrategy(balances) {
-    if ( hasBought == false ){
+    if (hasBought == false) {
         buy = avgPrice * (1 - config.SPREAD);
         sell = avgPrice * (1 + config.SPREAD);
         buy = buy.toFixed(4);
@@ -86,13 +86,6 @@ function simpleStrategy(balances) {
 }
 
 function start() {
-    try {
-        binance.cancel(config.CURRENCY + config.MARKET, orderid, (error, response, symbol) => {
-            console.log("Odem que estava aberta foi cancelada.");
-          });
-    } catch (e) {
-        console.log(e);
-    }
     console.clear();
     hasBought = false;
     startTime = Math.floor(+new Date() / 1000);
