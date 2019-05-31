@@ -67,8 +67,12 @@ function simpleStrategy(balances) {
     if (hasBought == false) {
         buy = avgPrice * (1 - config.SPREAD);
         sell = avgPrice * (1 + config.SPREAD);
-        buy = (buy > 1.0001 ? 1.0001 : buy.toFixed(4));
-        sell = (sell > 1.0025 ? 1.0025 : sell.toFixed(4));
+        //buy = (buy > 1.0001 ? 1.0001 : buy.toFixed(4));
+        //sell = (sell > 1.0025 ? 1.0025 : sell.toFixed(4));
+        
+        buy = buy.toFixed(4);
+        sell = sell.toFixed(4);
+        
     }
     try {
         binance.prevDay("BTC" + config.MARKET, (error, prevDay, symbol) => {
