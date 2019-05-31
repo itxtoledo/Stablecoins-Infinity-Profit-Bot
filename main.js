@@ -6,18 +6,36 @@ var binance = require('node-binance-api')().options({
     useServerTime: true
 });
 
+const minute = 1;
+
+const date = new Date();
+const tstart = date.getTime() - ((minute * 60) * 1000);
+const tfinish = date.getTime();
+
 start();
 
 setInterval(() => {
-
-    axios.get('https://api.binance.com/api/v3/avgPrice', {
-        params: {
-            symbol: config.CURRENCY + config.MARKET
-        }
-    })
+    
+        axios.get('https://api.binance.com/api/v1/aggTrades', {
+            params: {
+                symbol: config.CURRENCY + config.MARKET,
+                startTime: tstart,
+                endTime: tfinish
+            }
+        })
         .then(function (response) {
-            avgPrice = parseFloat(response.data.price);
-            //console.log(avgPrice);
+            
+            avgPrice = 0;
+
+            response.data.forEach(function(hist){
+            
+                avgPrice += parseFloat(hist.p);
+
+            });
+            
+            avgPrice = parseFloat(avgPrice/response.data.length).toFixed(4);
+        
+
             try {
                 binance.balance((error, balances) => {
                     if (error) return console.error(error);
