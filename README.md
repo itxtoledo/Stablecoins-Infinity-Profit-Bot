@@ -49,7 +49,7 @@ No arquivo config.json você encontrará o mercado USDT, caso queira negociar ne
 npm start
 ```
 
-Seja paciente e espere seu saldo em TUSD e USDT aumentar.
+6. Seja paciente e espere seu saldo em TUSD e USDT aumentar.
 
 ## Observações
 Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso so instale a versão em desenvolvimento se souber o que está fazendo.
