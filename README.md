@@ -65,5 +65,17 @@ ou no [Telegram](https://t.me/bitragem).
 ## Patrocinadores
 Tiago A Boaventura - 28/05/2019
 
+## Contribua com o projeto
+```bash
+USDS: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
+USDC: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
+TUSD: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
+USDT: 1Ed87MBpJHc23eytYYRp6uP9H831Qtcwek
+BTC: 1GzbMuVjhHLibL9fvayfE5UUWg4enKTVR3
+LTC: LgJpDPgM3friu848oZnAMM9iVfX8TBLWhF
+ETH: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
+DASH: Xwb4bKtbuLXsbfAtvbe6VCq5hmQJKA2tmF
+```
+
 ## Licença
 [MIT](https://choosealicense.com/licenses/mit/)
