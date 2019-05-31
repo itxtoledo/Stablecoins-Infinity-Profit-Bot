@@ -15,8 +15,8 @@ Ex.:
 
 ```bash
 {
-"CURRENCY": "TUSD", 
-"MARKET": "USDT"
+  "CURRENCY": "TUSD", 
+  "MARKET": "USDT"
 }
 ```
 No caso acima você estará negociando no par TUSD USDT.
