@@ -90,7 +90,7 @@ function start() {
         binance.cancel(config.CURRENCY + config.MARKET, orderid, (error, response, symbol) => {
             console.log("Odem que estava aberta foi cancelada.");
           });
-    } catch (error) {
+    } catch (e) {
         console.log(e);
     }
     console.clear();
