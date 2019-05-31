@@ -55,8 +55,8 @@ npm start
 Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso so instale a versão em desenvolvimento se souber o que está fazendo.
 
 ## Créditos
-Ideia inicial [@usdkhey](https://github.com/usdkhey)
-Novo algoritmo [@itxtoledo](https://github.com/itxtoledo)
+1. Ideia [@usdkhey](https://github.com/usdkhey)
+2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
 
 ## Comunidade
 Participe de nossa comunidade no [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
