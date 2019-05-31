@@ -39,7 +39,11 @@ No arquivo config.json você encontrará o mercado USDT, caso queira negociar ne
 
 Gere uma API, se não souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
 
-Ainda na pasta do Bot
+Coloque a API nos campos do arquivo config.json
+
+Cancele todas as ordens que estiverem abertas no par que você for negociar
+
+Inicie o BOT na pasta dele
 
 ```bash
 npm start
