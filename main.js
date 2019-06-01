@@ -12,10 +12,8 @@ start();
 
 setInterval(() => {
     
-    const minute = 1;
-
     const date = new Date();
-    const tstart = date.getTime() - ((minute * 60) * 1000);
+    const tstart = date.getTime() - (config.PERIOD * 60 * 1000);
     const tfinish = date.getTime();
     
         axios.get('https://api.binance.com/api/v1/aggTrades', {
