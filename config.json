@@ -4,5 +4,6 @@
     "CURRENCY": "TUSD",
     "MARKET" : "USDT",
     "SPREAD" : 0.00125,
+    "PERIOD" : 1,
     "INITIAL_INVESTMENT": 0
 }
