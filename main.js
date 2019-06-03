@@ -3,6 +3,7 @@ const Promise = require("bluebird")
 const _ = require("lodash")
 const fp = require("lodash/fp")
 const dotenvDefaults = require("dotenv-defaults")
+const app = require("./app")
 const typeOf = require("./src/typeOf")
 const fetchBalancesFromBinance = require("./src/fetchBalancesFromBinance")
 const createAPI = require("./src/createAPI")
@@ -13,12 +14,15 @@ const useState = require("./src/useState")
 
 dotenvDefaults.config()
 
-const isDevelopment = process.env.NODE_ENV === 'development'
-const isProduction = process.env.NODE_ENV === 'production'
+const isDevelopment = () => process.env.NODE_ENV === 'development'
+const isProduction = () => process.env.NODE_ENV === 'production'
 
 function main() {
   const binance = createBinance()
   const api = createAPI()
+
+  
+  app()
 
   const [state, setState] = useState({})
   setState({
@@ -32,8 +36,8 @@ function main() {
     startTime: Math.floor(+new Date() / 1000)
   })
   
-  if (isDevelopment) tick()
-  if (isProduction) setInterval(tick, 15000)
+  if (isDevelopment()) tick()
+  if (isProduction()) setInterval(tick, 15000)
 
   clearAndLog(chalk`{green Iniciando...}`)
 
