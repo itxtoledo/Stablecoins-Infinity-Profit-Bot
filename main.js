@@ -51,44 +51,41 @@ function main() {
       const profit = total - initialInvestment
       const percentage = ((profit * 100) / initialInvestment).toFixed(2)
 
-      beautifulLog(
-        {
-          ...totalBalances,
-          saldoTotal: concatWithUSD(total),
-          saldoInicial: concatWithUSD(initialInvestment),
-          lucro: concatWithUSD(profit)
-        },
-        ...jumpLineAndPrintOnCenter(percentage),
-        "%"
-      )
+      beautifulLog({
+        ...totalBalances,
+        saldoTotal: concatWithUSD(total),
+        saldoInicial: concatWithUSD(initialInvestment),
+        lucro: concatWithUSD(profit)
+      }, ...jumpLineAndPrintOnCenter(percentage), "%")
       
-      function jumpLineAndPrintOnCenter(content) {
-        return ["\n", " ".repeat(14), content]
-      }
-      function concatWithUSD(value) {
-        return [value, "USD"].join(" ")
-      }
       beautifulLog({
         uptime: getUptimeFromState(state),
         ordens: getOrdensFromState(state),
         hasOpeningBars: false,
         clearConsole: false
       })
-      function getUptimeFromState(state) {
-        return Math.floor(+new Date() / 1000) - state.startTime
-      }
-      function getOrdensFromState(state) {
-        return _.chain(state)
-          .pick("vendas", "compras")
-          .mapValues("total")
-          .mapValues(value => [value])
-          .value()
-      }
 
       return
       simpleStrategy(balances)
     } catch (err) {
       console.log(chalk`{red ERRO}`, err)
+    }
+
+    function jumpLineAndPrintOnCenter(content) {
+      return ["\n", " ".repeat(14), content]
+    }
+    function concatWithUSD(value) {
+      return [value, "USD"].join(" ")
+    }
+    function getUptimeFromState(state) {
+      return Math.floor(+new Date() / 1000) - state.startTime
+    }
+    function getOrdensFromState(state) {
+      return _.chain(state)
+        .pick("vendas", "compras")
+        .mapValues("total")
+        .mapValues(value => [value])
+        .value()
     }
   }
   async function simpleStrategy(balances) {
