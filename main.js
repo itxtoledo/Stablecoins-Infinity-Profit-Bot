@@ -1,95 +1,166 @@
-var config = require('./config.json');
-const axios = require('axios');
-var binance = require('node-binance-api')().options({
-    APIKEY: config.API_KEY,
-    APISECRET: config.SECRET_KEY,
-    useServerTime: true
-});
+const chalk = require("chalk")
+const Promise = require("bluebird")
+const _ = require("lodash")
+const fp = require("lodash/fp")
+const dotenvDefaults = require("dotenv-defaults")
+const typeOf = require("./src/typeOf")
+const fetchBalancesFromBinance = require("./src/fetchBalancesFromBinance")
+const createAPI = require("./src/createAPI")
+const fetchAvgPriceFromAPI = require("./src/fetchAvgPriceFromAPI")
+const beautifulLog = require("./src/beautifulLog")
+const createBinance = require("./src/createBinance")
+const useState = require("./src/useState")
 
-start();
+dotenvDefaults.config()
 
-setInterval(() => {
+function main() {
+  const binance = createBinance()
+  const api = createAPI()
 
-    axios.get('https://api.binance.com/api/v3/avgPrice', {
-        params: {
-            symbol: config.CURRENCY + config.MARKET
-        }
-    })
-        .then(function (response) {
-            avgPrice = parseFloat(response.data.price);
-            //console.log(avgPrice);
-            try {
-                binance.balance((error, balances) => {
-                    if (error) return console.error(error);
-                    const total = parseFloat(balances[config.MARKET].onOrder) + parseFloat(balances[config.MARKET].available) + parseFloat(balances[config.CURRENCY].onOrder) + parseFloat(balances[config.CURRENCY].available);
-                    console.clear();
-                    console.log("==========================================");
-                    console.log("SALDO 1......:", parseFloat(balances[config.MARKET].onOrder) + parseFloat(balances[config.MARKET].available), config.MARKET);
-                    console.log("SALDO 2......:", parseFloat(balances[config.CURRENCY].onOrder) + parseFloat(balances[config.CURRENCY].available), config.CURRENCY);
-                    console.log("SALDO TOTAL..:", total, "USD")
-                    console.log("SALDO INICIAL:", config.INITIAL_INVESTMENT, "USD")
-                    console.log("LUCRO........:", total - config.INITIAL_INVESTMENT, "USD");
-                    console.log("              ", ((total - config.INITIAL_INVESTMENT) * 100 / config.INITIAL_INVESTMENT).toFixed(2), "%");
-                    console.log("==========================================");
-                    console.log("UPTIME.......:", Math.floor(+new Date() / 1000) - startTime, "segundos");
-                    console.log("ORDENS.......:", "VENDAS: [", totalVendas, "] COMPRAS: [", totalCompras, "]");
-                    simpleStrategy(balances);
-                });
-            } catch (e) {
-                console.log("ERRO : " + e);
-            }
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
+  const [state, setState] = useState({})
+  setState({
+    hasBought: false,
+    vendas: {
+      total: 0
+    },
+    compras: {
+      total: 0
+    },
+    startTime: Math.floor(+new Date() / 1000)
+  })
 
-}, 15000);
+  //setInterval(tick, 15000)
+  tick()
 
-function simpleStrategy(balances) {
-    if (hasBought == false) {
-        buy = avgPrice * (1 - config.SPREAD);
-        sell = avgPrice * (1 + config.SPREAD);
-        buy = buy.toFixed(4);
-        sell = sell.toFixed(4);
-    }
+  clearAndLog(chalk`{green Iniciando...}`)
+
+  async function tick() {
     try {
-        binance.prevDay("BTC" + config.MARKET, (error, prevDay, symbol) => {
-            console.log("BTC" + config.MARKET + "......:", prevDay.lastPrice);
-            console.log("DEFINIDOS....: Compra " + buy + " e Venda " + sell);
-            if (balances[config.MARKET].available > 20) {
-                try {
-                    totalCompras++;
-                    hasBought = true;
-                    binance.buy(config.CURRENCY + config.MARKET, ((balances[config.MARKET].available - 0.1) / buy).toFixed(2), buy);
-                } catch (e) {
-                    totalCompras--;
-                    hasBought = false;
-                    throw e;
-                }
-            }
-            if (balances[config.CURRENCY].available > 20) {
-                try {
-                    totalVendas++;
-                    hasBought = false;
-                    binance.sell(config.CURRENCY + config.MARKET, (balances[config.CURRENCY].available - 0.1).toFixed(2), sell);
-                } catch (e) {
-                    totalVendas--;
-                    hasBought = true;
-                    throw e;
-                }
-            }
-            console.log("==========================================");
-        });
-    } catch (e) {
-        throw e;
+      const avgPrice = await fetchAvgPriceFromAPI(api)
+
+      setState({ avgPrice })
+
+      const {
+        values: balances,
+        total,
+        totalValues: totalBalances
+      } = await fetchBalancesFromBinance(binance)
+
+      const initialInvestment = Number(process.env.INITIAL_INVESTMENT)
+
+      const profit = total - initialInvestment
+      const percentage = ((profit * 100) / initialInvestment).toFixed(2)
+
+      beautifulLog(
+        {
+          ...totalBalances,
+          saldoTotal: concatWithUSD(total),
+          saldoInicial: concatWithUSD(initialInvestment),
+          lucro: concatWithUSD(profit)
+        },
+        ...jumpLineAndPrintOnCenter(percentage),
+        "%"
+      )
+      
+      function jumpLineAndPrintOnCenter(content) {
+        return ["\n", " ".repeat(14), content]
+      }
+      function concatWithUSD(value) {
+        return [value, "USD"].join(" ")
+      }
+      beautifulLog({
+        uptime: getUptimeFromState(state),
+        ordens: getOrdensFromState(state),
+        hasOpeningBars: false,
+        clearConsole: false
+      })
+      function getUptimeFromState(state) {
+        return Math.floor(+new Date() / 1000) - state.startTime
+      }
+      function getOrdensFromState(state) {
+        return _.chain(state)
+          .pick("vendas", "compras")
+          .mapValues("total")
+          .mapValues(value => [value])
+          .value()
+      }
+
+      return
+      simpleStrategy(balances)
+    } catch (err) {
+      console.log(chalk`{red ERRO}`, err)
     }
+  }
+  async function simpleStrategy(balances) {
+    const { hasBought } = state
+
+    if (hasBought === false)
+      setState({
+        buy: calculate("buy"),
+        sell: calculate("sell")
+      })
+
+    try {
+      const btcAndMarket = ["BTC", process.env.MARKET].join("")
+
+      const [prevDay] = await binance.prevDayAsync(btcAndMarket)
+      const { lastPrice } = prevDay
+
+      console.log(btcAndMarket, "......:", lastPrice)
+
+      const { buy, sell } = state
+
+      console.log("DEFINIDOS....: Compra " + buy + " e Venda " + sell)
+      if (balances[process.env.MARKET].available > 20) {
+        try {
+          compras++
+          hasBought = true
+          binance.buy(
+            process.env.CURRENCY + process.env.MARKET,
+            ((balances[process.env.MARKET].available - 0.1) / buy).toFixed(2),
+            buy
+          )
+        } catch (e) {
+          compras--
+          hasBought = false
+          throw e
+        }
+      }
+      if (balances[process.env.CURRENCY].available > 20) {
+        try {
+          vendas++
+          hasBought = false
+          binance.sell(
+            process.env.CURRENCY + process.env.MARKET,
+            (balances[process.env.CURRENCY].available - 0.1).toFixed(2),
+            sell
+          )
+        } catch (e) {
+          vendas--
+          hasBought = true
+          throw e
+        }
+      }
+      console.log("==========================================")
+    } catch (err) {
+      throw err
+    }
+
+    function calculate(type) {
+      const { avgPrice } = state
+
+      const operation = type === "buy" ? -1 : 1
+
+      const value = avgPrice * (1 + process.env.SPREAD * operation)
+
+      return value.toFixed(4)
+    }
+  }
+
+  function clearAndLog(...params) {
+    console.clear()
+    console.log(...params)
+  }
 }
 
-function start() {
-    console.clear();
-    hasBought = false;
-    startTime = Math.floor(+new Date() / 1000);
-    totalCompras = 0;
-    totalVendas = 0;
-    console.log("Iniciando...");
-}
+main()

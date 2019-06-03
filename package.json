@@ -15,6 +15,9 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "bluebird": "^3.5.5",
+    "chalk": "^2.4.2",
+    "dotenv-defaults": "^1.0.2",
     "node-binance-api": "^0.9.1"
   },
   "keywords": [

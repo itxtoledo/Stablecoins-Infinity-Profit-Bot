@@ -1,8 +1,0 @@
-{
-    "API_KEY": "",
-    "SECRET_KEY": "",
-    "CURRENCY": "TUSD",
-    "MARKET" : "USDT",
-    "SPREAD" : 0.00125,
-    "INITIAL_INVESTMENT": 0
-}

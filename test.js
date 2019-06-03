@@ -1,11 +1,25 @@
-var config = require('./config.json')
-const axios = require('axios');
+const axios = require("axios")
+const dotenvDefaults = require("dotenv-defaults")
 
-axios.get('https://api.binance.com/api/v3/avgPrice', {
+
+async function main() {
+  dotenvDefaults.config()
+  
+  try {
+    const { data } = await axios.get(
+      "https://api.binance.com/api/v3/avgPrice",
+      {
         params: {
-            symbol: config.CURRENCY + config.MARKET
+          symbol: process.env.CURRENCY + process.env.MARKET
         }
-    })
-        .then(function (response) {
-          console.log(response)
-         })
+      }
+    )
+    console.log(data)
+  } catch (err) {
+    if (err.data) console.log(err.data)
+
+    console.log(err)
+  }
+}
+
+main()
