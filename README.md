@@ -8,18 +8,22 @@ O mais bonito? Nenhum risco de perder dinheiro! Nós só podemos ganhar ... enqu
 
 ## Instalação
 
-Clone esse repositório e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
+Clone esse repositório e edite o arquivo .env inserindo sua API key e Secret key da Binance.
 Você também pode decidiar em qual par operar somente mudando CURRENCY para a moeda que será negociada e MARKET para o mercado desejado. 
 
 Ex.: 
 
-```bash
-{
-  "CURRENCY": "TUSD", 
-  "MARKET": "USDT"
-}
+```env
+API_KEY=3t34j34FAS39jf349j02fjasfjsFSopjfrmsmgASDAodfpjiojfafjwfjospjJDF
+SECRET_KEY=afdsfa4j34FAS39jf349j02fjasfjsFSopjfrmsmgASDAodfpjioSDsfafjwfjos
+CURRENCY=TUSD
+MARKET=USDT
+SPREAD=0.00125
+INITIAL_INVESTMENT=0
 ```
 No caso acima você estará negociando no par TUSD USDT.
+
+Você poderá também editar pela aba que será aberta no navegador em http://127.0.0.1:3003/
 
 Instale o NodeJS: https://nodejs.org/en/
 
@@ -35,11 +39,11 @@ npm install
 
 Nota:
 
-No arquivo config.json você encontrará o mercado USDT, caso queira negociar neste mercado você deverá comprar Tether antes de ligar o BOT.
+No arquivo .env você encontrará o mercado USDT, caso queira negociar neste mercado você deverá comprar Tether antes de ligar o BOT.
 
 2. Gere uma API, se não souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
 
-3. Coloque a API nos campos do arquivo config.json
+3. Coloque a API nos campos do arquivo .env
 
 4. Cancele todas as ordens que estiverem abertas no par que você for negociar
 
