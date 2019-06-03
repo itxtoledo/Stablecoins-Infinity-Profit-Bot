@@ -13,6 +13,9 @@ const useState = require("./src/useState")
 
 dotenvDefaults.config()
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+const isProduction = process.env.NODE_ENV === 'production'
+
 function main() {
   const binance = createBinance()
   const api = createAPI()
@@ -28,9 +31,9 @@ function main() {
     },
     startTime: Math.floor(+new Date() / 1000)
   })
-
-  //setInterval(tick, 15000)
-  tick()
+  
+  if (isDevelopment) tick()
+  if (isProduction) setInterval(tick, 15000)
 
   clearAndLog(chalk`{green Iniciando...}`)
 
