@@ -1,0 +1,190 @@
+<html>
+  <head>
+    <title>BOT Config</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css"
+    />
+    <meta
+      data-n-head="true"
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/lodash"></script>
+    <style>
+      .flex {
+        display: flex;
+      }
+      .width-1 {
+        width: 100%;
+      }
+
+      .flex-1 {
+        flex: 1;
+      }
+      .flex-2 {
+        flex: 2;
+      }
+
+      .center {
+        justify-content: center;
+      }
+      .align-center {
+        align-items: center;
+      }
+      .flex-column {
+        flex-direction: column;
+      }
+      .mh-10 {
+        margin-right: 100px;
+        margin-left: 100px;
+      }
+      .p-1 {
+        padding: 10px;
+      }
+      .pt-1 {
+        padding: 10px;
+      }
+      .wrap {
+        word-wrap: break-word;
+        word-break: break-all;
+      }
+      .space-between {
+        justify-content: space-between;
+      }
+      @media (max-width: 1000px) {
+        .flex-lg-column {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <section class="hero">
+        <div class="hero-body">
+          <div class="container has-text-centered">
+            <div class="flex center align-center flex-column">
+              <!-- SEARCH -->
+              <div class="flex flex-lg-column width-1">
+                <div class="flex-1">
+                  <aside class="menu">
+                    <p class="menu-label">
+                      General
+                    </p>
+                    <ul class="menu-list">
+                      <li><a class="is-active">Dashboard</a></li>
+                    </ul>
+                  </aside>
+                </div>
+                <div class="flex flex-column flex-2">
+                  <h3
+                    @click="resetConfig"
+                    class="is-size-4 flex-big-lg-column has-text-weight-light flex pt-1 space-between mh-10"
+                  >
+                    <div
+                      class="p-1 flex-1 flex center align-center wrap has-text-link"
+                    >
+                      <a class="button is-link flex-1 p-2 m-1">
+                        DEFAULT CONFIG
+                      </a>
+                    </div>
+                  </h3>
+                  <h3
+                    class="is-size-4 flex-big-lg-column has-text-weight-light flex pt-1 space-between mh-10"
+                    v-for="({ value, name, title }, index) of displayConfig"
+                  >
+                    <div
+                      class="p-1 flex-1 flex center align-center wrap has-text-link"
+                    >
+                      {{ title }}
+                    </div>
+                    <input
+                      class="p-1 flex-1 flex center align-center wrap input"
+                      type="text"
+                      v-model="config[name]"
+                    />
+                  </h3>
+                  <h3
+                    class="is-size-4 flex-big-lg-column has-text-weight-light flex pt-1 space-between mh-10"
+                  >
+                    <div
+                      class="p-1 flex-1 flex center align-center wrap has-text-link"
+                    >
+                      <a @click="save" class="button is-link flex-1 p-2 m-1">
+                        SAVE
+                      </a>
+                    </div>
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const api = axios.create({
+        baseURL: window.location.origin
+      })
+
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            config: {}
+          }
+        },
+        mounted() {
+          this.fetchConfig()
+        },
+        methods: {
+          resetConfig() {
+            this.config = this.defaultConfig
+          },
+          async fetchConfig() {
+            try {
+              const {
+                data: { config, defaultConfig }
+              } = await axios.get("/api/config")
+              this.config = config
+              this.defaultConfig = defaultConfig
+            } catch (err) {}
+          },
+          async save() {
+            try {
+              const config = this.config
+
+              
+              await axios.post("/api/save", {
+                config
+              })
+
+              alert('Success')
+            } catch (err) {
+              console.log(err)
+              alert('Error, can\'t save')
+            }
+          }
+        },
+        computed: {
+          displayConfig() {
+            const { nodeEnv, ...otherConfig } = this.config
+            return _.chain(otherConfig)
+              .map((value, key) => {
+                return {
+                  value,
+                  name: key,
+                  title: _.upperCase(key)
+                }
+              })
+              .value()
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
