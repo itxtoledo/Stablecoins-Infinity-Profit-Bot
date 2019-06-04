@@ -1,4 +1,5 @@
-# TUSD-USDT Infinity Profit Bot
+# Stablecoin-Infinity-Profit-Bot
+Old TUSD-USDT Infinity Profit Bot
 
 ## Funcionamento
 
