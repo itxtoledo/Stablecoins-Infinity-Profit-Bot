@@ -1,9 +1,9 @@
 {
-  "name": "tusd-usdt-infinity-profit-bot",
+  "name": "stablecoins-infinity-profit-bot",
   "version": "1.0.0",
-  "description": "Make infinity money with TUSD and USDT",
+  "description": "Make infinity money with stablecoins",
   "main": "main.js",
-  "repository": "github:itxtoledo/TUSD-USDT-Infinity-Profit-Bot",
+  "repository": "github:itxtoledo/Stablecoins-Infinity-Profit-Bot",
   "scripts": {
     "start": "node main.js"
   },
@@ -14,14 +14,16 @@
   },
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.18.0",
-    "node-binance-api": "^0.9.1"
+    "binance-api-node": "^0.9.2",
+    "node-cron": "^2.0.3"
   },
   "keywords": [
     "javascript",
     "nodejs",
     "binance",
+    "stablecoin",
     "tusd",
     "usdt"
-  ]
+  ],
+  "devDependencies": {}
 }

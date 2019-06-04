@@ -1,11 +1,20 @@
-var config = require('./config.json')
-const axios = require('axios');
+var config = require('./config.json');
 
-axios.get('https://api.binance.com/api/v3/avgPrice', {
-        params: {
-            symbol: config.CURRENCY + config.MARKET
-        }
-    })
-        .then(function (response) {
-          console.log(response)
-         })
+const Binance = require('binance-api-node').default
+
+
+// Authenticated client, can make signed calls
+const client = Binance({
+  apiKey: config.API_KEY,
+  apiSecret: config.SECRET_KEY,
+})
+
+
+client.openOrders({
+  symbol: 'BNBBTC',
+}).then((result) => {
+  console.log(result)
+  console.log(result.length)
+}).catch((err) => {
+  
+});

@@ -1,8 +1,10 @@
 {
     "API_KEY": "",
     "SECRET_KEY": "",
-    "CURRENCY": "TUSD",
+    "CURRENCY": "USDC",
     "MARKET" : "USDT",
-    "SPREAD" : 0.00125,
-    "INITIAL_INVESTMENT": 0
+    "SPREAD" : 0.00130,
+    "LOOP_TIME": 15,
+    "MAX_ASK": 1,
+    "INITIAL_INVESTMENT": 20
 }
