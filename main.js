@@ -25,7 +25,7 @@ var task = cron.schedule('*/' + config.LOOP_TIME + ' * * * * *', () => {
                     // salva a soma dos saldos
                     total = marketBalanceLocked + marketBalanceFree + currencyBalanceLocked + currencyBalanceFree;
 
-                    //console.clear();
+                    console.clear();
                     console.log("===========================================");
                     console.log("SALDO 1......:", marketBalanceLocked + marketBalanceFree);
                     console.log("SALDO 2......:", currencyBalanceLocked + currencyBalanceFree);
@@ -58,12 +58,13 @@ function simpleStrategy() {
         .then((result) => {
             console.log("BTC" + config.MARKET + "......:", result.lastPrice);
             console.log("DEFINIDOS....: Compra " + buyPrice + " e Venda " + sellPrice);
+            console.log("MÁXIMO COMPRA: " + config.MAX_ASK.toFixed(4));
             console.log("===========================================");
             client.openOrders({
                 symbol: 'USDCUSDT',
               }).then((result) => {
                 if (result.length == 0){
-                    if (marketBalanceFree > 20 && buyPrice < (1 - config.SPREAD)) {
+                    if (marketBalanceFree > 20 && buyPrice <= config.MAX_ASK.toFixed(4)){
                         client.order({
                             symbol: config.CURRENCY + config.MARKET,
                             side: 'BUY',
@@ -79,7 +80,7 @@ function simpleStrategy() {
                                 totalCompras--;
                                 hasBought = false;
                                 throw err;
-                            });
+                            });                        
                     }
                     if (currencyBalanceFree > 20) {
                         client.order({
