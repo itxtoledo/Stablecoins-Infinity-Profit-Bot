@@ -10,8 +10,8 @@ O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
 ## Instalação
 
 1. Clone esse repositório e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
-- Insire qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
-- Insira a moeda do mercado que você irá operar, no exemplo abaixo estamos definindo TUSD como *CURRENCY*.
+    - Insire qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
+    - Insira a moeda do mercado que você irá operar, no exemplo abaixo estamos definindo TUSD como *CURRENCY*.
 
 ```bash
 {
@@ -26,10 +26,10 @@ O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
     "LISTEN_PORT" : 80
 }
 ```
-- Escolha qual será o seu *SPREAD*, por padrão usaremos 0.0013.
-- Escolha o *MAX_ASK*, aqui você define o valor máximo para o Bot efetuar a compra de um ativo.
-- *INITIAL_INVESTMENT*, como o próprio nome diz, deve ser o valor que você alocou na moeda definida em MARKET para iniciar o Bot.
-- Agora se você deseja executar esse Bot em um servidor, a chave *LISTEN_PORT* é muito importante, por padrão aqui vem setado em 80.
+    - Escolha qual será o seu *SPREAD*, por padrão usaremos 0.0013.
+    - Escolha o *MAX_ASK*, aqui você define o valor máximo para o Bot efetuar a compra de um ativo.
+    - *INITIAL_INVESTMENT*, como o próprio nome diz, deve ser o valor que você alocou na moeda definida em *MARKET* para iniciar o Bot.
+    - Agora se você deseja executar esse Bot em um servidor, a chave *LISTEN_PORT* é muito importante, por padrão aqui vem setado em 80.
 
 
 2. Instale o NodeJS: https://nodejs.org/en/
