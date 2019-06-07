@@ -9,7 +9,7 @@ O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
 
 ## Instalação
 
-1. Clone esse repositório e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
+1. Baixe a útlima [release](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/releases), descompacte e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
     - Insira qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
     - Insira a moeda do mercado que você irá operar, no exemplo abaixo estamos definindo TUSD como *CURRENCY*.
     - Escolha qual será o seu *SPREAD*, por padrão usaremos 0.0013.
