@@ -1,6 +1,7 @@
 var config = require('./config.json');
 var cron = require('node-cron');
 const Binance = require('binance-api-node').default;
+var app = require('express')();
 
 const client = Binance({
     apiKey: config.API_KEY,
@@ -61,8 +62,8 @@ function simpleStrategy() {
             console.log("===========================================");
             client.openOrders({
                 symbol: 'USDCUSDT',
-              }).then((result) => {
-                if (result.length == 0){
+            }).then((result) => {
+                if (result.length == 0) {
                     if (marketBalanceFree > 20 && buyPrice < (1 - config.SPREAD)) {
                         client.order({
                             symbol: config.CURRENCY + config.MARKET,
@@ -100,9 +101,9 @@ function simpleStrategy() {
                             });
                     }
                 }
-              }).catch((err) => {
+            }).catch((err) => {
                 throw err;
-              });
+            });
         }).catch((err) => {
             throw err;
         });
@@ -120,3 +121,24 @@ console.log("Iniciando...");
 
 // inicia o cronjob
 task.start();
+
+// api de consulta dos dados externamente
+app.get('/', (req, res) => {
+    res.json(
+        {
+            initialInvestment: config.INITIAL_INVESTMENT,
+            market: config.MARKET,
+            currency: config.CURRENCY,
+            balances: {
+                market: marketBalanceLocked + marketBalanceFree,
+                currency: currencyBalanceLocked + currencyBalanceFree
+            },
+            profit: {
+                USD: total - config.INITIAL_INVESTMENT,
+                percent: parseFloat(((total - config.INITIAL_INVESTMENT) * 100 / config.INITIAL_INVESTMENT).toFixed(2))
+            }
+        }
+    );
+});
+
+app.listen(config.LISTEN_PORT);
