@@ -3,7 +3,7 @@ Old TUSD-USDT Infinity Profit Bot
 
 ## Funcionamento
 
-É bem simples, mas você deve refletir sobre isso. O bot se aproveita das pequenas variações entre o TUSD e o USDT. Em cada negociação, você ganha um pouco mais do que as taxas da Binance. Cada trade é mais lucrativo que o anterior.
+É bem simples, mas você deve refletir sobre isso. O bot se aproveita das pequenas variações entre as stablecoins. Em cada negociação, você ganha um pouco mais do que as taxas da Binance. Cada trade é mais lucrativo que o anterior.
 
 O mais bonito? Nenhum risco de perder dinheiro! Nós só podemos ganhar ... enquanto o tether não explodir.
 
