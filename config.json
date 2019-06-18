@@ -7,5 +7,5 @@
     "LOOP_TIME": 15,
     "MAX_ASK": 1,
     "INITIAL_INVESTMENT": 20,
-    "LISTEN_PORT" : 80
+    "LISTEN_PORT" : 3333
 }
