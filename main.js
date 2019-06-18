@@ -62,7 +62,7 @@ function simpleStrategy() {
             console.log("MÁXIMO COMPRA: " + config.MAX_ASK.toFixed(4));
             console.log("===========================================");
             client.openOrders({
-                symbol: 'USDCUSDT',
+                symbol: config.CURRENCY + config.MARKET,
             }).then((result) => {
                 if (result.length == 0) {
                     if (marketBalanceFree > 20 && buyPrice < (1 - config.SPREAD)) {
