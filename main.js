@@ -50,8 +50,8 @@ var task = cron.schedule('*/' + config.LOOP_TIME + ' * * * * *', () => {
 
 function simpleStrategy() {
     if (hasBought == false) {
-        buyPrice = avgPrice * (1 - config.SPREAD);
-        sellPrice = avgPrice * (1 + config.SPREAD);
+        buyPrice = avgPrice * (1 - config.SPREAD_BUY);
+        sellPrice = avgPrice * (1 + config.SPREAD_SELL);
         buyPrice = buyPrice.toFixed(4);
         sellPrice = sellPrice.toFixed(4);
     }
@@ -65,7 +65,7 @@ function simpleStrategy() {
                 symbol: config.CURRENCY + config.MARKET,
             }).then((result) => {
                 if (result.length == 0) {
-                    if (marketBalanceFree > 20 && buyPrice < (1 - config.SPREAD)) {
+                    if (marketBalanceFree > 20 && buyPrice < (1 - config.SPREAD_BUY)) {
                         client.order({
                             symbol: config.CURRENCY + config.MARKET,
                             side: 'BUY',
