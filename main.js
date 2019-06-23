@@ -143,6 +143,10 @@ app.get('/', (req, res) => {
             profit: {
                 USD: total - config.INITIAL_INVESTMENT,
                 percent: parseFloat(((total - config.INITIAL_INVESTMENT) * 100 / config.INITIAL_INVESTMENT).toFixed(2))
+            },
+            trades: {
+                buys: totalCompras,
+                sells: totalVendas
             }
         }
     );
