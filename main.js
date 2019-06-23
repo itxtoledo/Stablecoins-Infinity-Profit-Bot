@@ -65,7 +65,7 @@ function simpleStrategy() {
                 symbol: config.CURRENCY + config.MARKET,
             }).then((result) => {
                 if (result.length == 0) {
-                    if (marketBalanceFree > 20 && buyPrice < (1 - config.SPREAD_BUY)) {
+                    if (marketBalanceFree > 20 && buyPrice < (config.MAX_ASK - config.SPREAD_BUY)) {
                         client.order({
                             symbol: config.CURRENCY + config.MARKET,
                             side: 'BUY',
