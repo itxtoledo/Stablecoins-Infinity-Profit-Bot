@@ -12,22 +12,23 @@ O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
 1. Baixe a útlima [release](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/releases), descompacte e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
     - Insira qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
     - Insira a moeda do mercado que você irá operar, no exemplo abaixo estamos definindo TUSD como *CURRENCY*.
-    - Escolha qual será o seu *SPREAD*, por padrão usaremos 0.0013.
+    - Escolha qual será o seu *SPREAD_BUY* e *SPREAD_SELL*, usaremos aqui o padrão.
     - Escolha o *MAX_ASK*, aqui você define o valor máximo para o Bot efetuar a compra de um ativo.
     - *INITIAL_INVESTMENT*, como o próprio nome diz, deve ser o valor que você alocou na moeda definida em *MARKET* para iniciar o Bot.
-    - Agora se você deseja executar esse Bot em um servidor, a chave *LISTEN_PORT* é muito importante, por padrão aqui vem setado em 80.
+    - Agora se você deseja executar esse Bot em um servidor, a chave *LISTEN_PORT* é muito importante, por padrão aqui vem setado em 3333.
 
 ```bash
 {
-    "API_KEY": "example3X4MPL3example123",
-    "SECRET_KEY": "example3X4MPL3example123",
+    "API_KEY": "your_api_key",
+    "SECRET_KEY": "your_secret_key",
     "CURRENCY": "TUSD",
     "MARKET" : "USDT",
-    "SPREAD" : 0.0013,
+    "SPREAD_SELL" : 0.00100,
+    "SPREAD_BUY" : 0.00150,
     "LOOP_TIME": 15,
     "MAX_ASK": 1,
     "INITIAL_INVESTMENT": 20,
-    "LISTEN_PORT" : 80
+    "LISTEN_PORT" : 3333
 }
 ```
 
@@ -58,11 +59,11 @@ No arquivo config.json você encontrará o mercado USDT, caso queira negociar ne
 6. Seja paciente e espere seu saldo na moeda definida em *MARKET* aumentar
 
 ## Observações
-Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso so instale a versão em desenvolvimento se souber o que está fazendo.
+Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso só instale a versão em desenvolvimento se souber o que está fazendo.
 
 O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta acessar o IP do seu servidor e a porta definida no arquivo de configurações. Caso esteja executando localmente, para acessar a api o caminho seria como algo assim:
 ```bash
-  localhost:80
+  localhost:3333
 ```
 ## Créditos
 1. Ideia [@usdkhey](https://github.com/usdkhey)
