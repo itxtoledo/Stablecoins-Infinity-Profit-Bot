@@ -1,0 +1,9 @@
+version: '2'
+services:
+  bot:
+    build: .
+    restart: always
+    command: npm start
+    ports:
+      - 3333:3333
+
