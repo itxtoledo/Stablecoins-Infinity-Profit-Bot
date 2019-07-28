@@ -37,10 +37,8 @@ Obs.: No desenvolvimento e testes foram utilizadas as seguintes versões:
 ```
 Node v12.5.0
 NPM 6.9.0
-3. Vá para a pasta bot com o terminal e execute
-
-
 ```
+3. Vá para a pasta bot com o terminal e execute
 
 ```bash
 npm install
