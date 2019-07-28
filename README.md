@@ -33,7 +33,14 @@ O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
 ```
 
 2. Instale o NodeJS: https://nodejs.org/en/
+Obs.: No desenvolvimento e testes foram utilizadas as seguintes versões:
+```
+Node v12.5.0
+NPM 6.9.0
 3. Vá para a pasta bot com o terminal e execute
+
+
+```
 
 ```bash
 npm install
