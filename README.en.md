@@ -1,21 +1,22 @@
 # Stablecoins-Infinity-Profit-Bot
+
 Old TUSD-USDT Infinity Profit Bot
 
-## Funcionamento
+## How it works
 
-É bem simples. O Bot se aproveita das pequenas variações entre as stablecoins. Em cada negociação, você ganha um pouco mais do que as taxas da Binance. Cada trade é mais lucrativo que o anterior.
+It's simple. This bot takes advantage of little variation between stablecoins. In every trade you get a little bit more than the Binance fees. Every trade is more profitable than the last one.
 
-O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
+Do you know what? It's risk free! We can only have gains!
 
-## Instalação
+## Install
 
-1. Baixe a útlima [release](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/releases), descompacte e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
-    - Insira qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
-    - Insira a moeda do mercado que você irá operar, no exemplo abaixo estamos definindo TUSD como *CURRENCY*.
-    - Escolha qual será o seu *SPREAD_BUY* e *SPREAD_SELL*, usaremos aqui o padrão.
-    - Escolha o *MAX_ASK*, aqui você define o valor máximo para o Bot efetuar a compra de um ativo.
-    - *INITIAL_INVESTMENT*, como o próprio nome diz, deve ser o valor que você alocou na moeda definida em *MARKET* para iniciar o Bot.
-    - Agora se você deseja executar esse Bot em um servidor, a chave *LISTEN_PORT* é muito importante, por padrão aqui vem setado em 3333.
+1. Download the last [release](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/releases), uncompress and edit the config.json. Insert your Binance's API and Secret keys.
+   - Insert the pair our Bot will trade in _MARKET_ just put the market ID as we find in Binance, for instance we will put USDT.
+   - Insert the market's coin we want to trade as _CURRENCY_, for instance TUSD.
+   - Type your _SPREAD_BUY_ and _SPREAD_SELL_. For now we will leave the default value.
+   - In _MAX_ASK_, you can set the maximum value of the buy order.
+   - _INITIAL_INVESTMENT_, it's the value you did deposit to start trading.
+   - If you want to start this Bot in a Server, pay attention to the _LISTEN_PORT_ key. Very important to check this. Default is set to 3333 port.
 
 ```bash
 {
@@ -32,56 +33,65 @@ O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
 }
 ```
 
-2. Instale o NodeJS: https://nodejs.org/en/
-Obs.: No desenvolvimento e testes foram utilizadas as seguintes versões:
+2. Install NodeJS: https://nodejs.org/en/
+   While developing we used the following versions:
+
 ```
 Node v12.5.0
 NPM 6.9.0
 ```
-3. Vá para a pasta bot com o terminal e execute
+
+3. Open your terminal prompt and head to the bot folder. Then type and press Enter the following command:
 
 ```bash
 npm install
 ```
 
-## Utilização
+## How to use
 
-1. Ter mais de US $20 em sua conta da Binance na moeda do mercado selecionado. 
+1. You must have more than \$20 USD in your Binance wallet in the coin you choose to trade.
 
-Nota:
+Notice:
 
-No arquivo config.json você encontrará o mercado USDT, caso queira negociar neste mercado você deverá comprar Tether antes de ligar o BOT.
+The config.json file is set for USDT market so if you want to trade this market you must have USD Tether before start the Bot.
 
-2. Gere uma API, se não souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
-3. Coloque a API nos campos do arquivo config.json
-4. Cancele todas as ordens que estiverem abertas no par que você for negociar
-5. Inicie o BOT na pasta dele
+2. Generate an API. If you don't know how to do it, watch this video: https://www.youtube.com/watch?v=OdzjaE6O31E
+3. Insert your API keys in config.json file
+4. Before start, just in case, cancel all open orders in the currency pair you want to trade
+5. Start the bot as follows
 
 ```bash
   npm start
 ```
 
-6. Seja paciente e espere seu saldo na moeda definida em *MARKET* aumentar
+6. Be patient and wait your balance increase little by little.
 
-## Observações
-Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso só instale a versão em desenvolvimento se souber o que está fazendo.
+## Notes
 
-O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta acessar o IP do seu servidor e a porta definida no arquivo de configurações. Caso esteja executando localmente, para acessar a api o caminho seria como algo assim:
+We are always updating this bot, losing trades may happen so only install the DEV realease if you know what you are doing.
+
+This Bot have an API so you can get real time info. To use just access your IP server address and the Port you set before in the config file. If you are running local you can access the API like this:
+
 ```bash
   localhost:3333
 ```
-## Créditos
-1. Ideia [@usdkhey](https://github.com/usdkhey)
-2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
 
-## Comunidade
-Participe de nossa comunidade no [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
-ou no [Telegram](https://t.me/bitragem).
+## Credits
 
-## Patrocinadores
+1. Idea [@usdkhey](https://github.com/usdkhey)
+2. Algorithm [@itxtoledo](https://github.com/itxtoledo)
+
+## Comunity
+
+Join our comunity: [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
+or [Telegram](https://t.me/bitragem).
+
+## Sponsors
+
 Tiago A Boaventura - 28/05/2019
 
-## Contribua com o projeto
+## Make your donation and help our project
+
 ```bash
   USDS: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
   USDC: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
@@ -93,5 +103,6 @@ Tiago A Boaventura - 28/05/2019
   DASH: Xwb4bKtbuLXsbfAtvbe6VCq5hmQJKA2tmF
 ```
 
-## Licença
+## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
