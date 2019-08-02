@@ -2,6 +2,9 @@
 
 Old TUSD-USDT Infinity Profit Bot
 
+- [English](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.en.md)
+- [Español - no completado](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.es.md)
+
 ## How it works
 
 It's simple. This bot takes advantage of little variation between stablecoins. In every trade you get a little bit more than the Binance fees. Every trade is more profitable than the last one.
