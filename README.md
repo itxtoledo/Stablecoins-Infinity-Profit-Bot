@@ -1,5 +1,5 @@
 # Stablecoins-Infinity-Profit-Bot
-Old TUSD-USDT Infinity Profit Bot
+Antigo TUSD-USDT Infinity Profit Bot
 
 - [English](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.en.md)
 - [Español - no completado](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.es.md)
