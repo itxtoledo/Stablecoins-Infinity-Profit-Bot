@@ -1,13 +1,16 @@
 # Stablecoins-Infinity-Profit-Bot
-Old TUSD-USDT Infinity Profit Bot
+Antiguo bot de ganancias infinitas TUSD-USDT
 
-## Funcionamento
+- [English](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.en.md)
+- [Español - no completado](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.es.md)
 
-É bem simples. O Bot se aproveita das pequenas variações entre as stablecoins. Em cada negociação, você ganha um pouco mais do que as taxas da Binance. Cada trade é mais lucrativo que o anterior.
+## Cómo funciona
 
-O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
+Es sencillo. Este bot aprovecha la pequeña variación entre las monedas estables. En cada operación obtienes un poco más que las tarifas de Binance. Cada comercio es más rentable que el anterior.
 
-## Instalação
+¿Sabes que? ¡Es libre de riesgos! ¡Solo podemos tener ganancias!
+
+## Instalar
 
 1. Baixe a útlima [release](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/releases), descompacte e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
     - Insira qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
@@ -71,17 +74,19 @@ O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta a
   localhost:3333
 ```
 ## Créditos
-1. Ideia [@usdkhey](https://github.com/usdkhey)
-2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
+1. Idea [@usdkhey](https://github.com/usdkhey)
+2. Algoritmo [@itxtoledo](https://github.com/itxtoledo)
 
-## Comunidade
-Participe de nossa comunidade no [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
-ou no [Telegram](https://t.me/bitragem).
+## Comunidad
+Únete a nuestras comunidades en Telegram:
+[Português](https://t.me/bitragem)
+[English](https://t.me/bitragemEnglish)
+[Español](https://t.me/bitragemSpanish)
 
 ## Patrocinadores
 Tiago A Boaventura - 28/05/2019
 
-## Contribua com o projeto
+## Haz tu donación y ayuda a nuestro proyecto
 ```bash
   USDS: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
   USDC: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
@@ -93,5 +98,5 @@ Tiago A Boaventura - 28/05/2019
   DASH: Xwb4bKtbuLXsbfAtvbe6VCq5hmQJKA2tmF
 ```
 
-## Licença
+## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
