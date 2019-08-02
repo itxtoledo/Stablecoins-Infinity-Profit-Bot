@@ -1,6 +1,9 @@
 # Stablecoins-Infinity-Profit-Bot
 Old TUSD-USDT Infinity Profit Bot
 
+- [English](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.en.md)
+- [Español - no completado](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.es.md)
+
 ## Funcionamento
 
 É bem simples. O Bot se aproveita das pequenas variações entre as stablecoins. Em cada negociação, você ganha um pouco mais do que as taxas da Binance. Cada trade é mais lucrativo que o anterior.
@@ -75,8 +78,10 @@ O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta a
 2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
 
 ## Comunidade
-Participe de nossa comunidade no [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
-ou no [Telegram](https://t.me/bitragem).
+Participe de nossas comunidades no Telegram:
+[Português](https://t.me/bitragem)
+[English](https://t.me/bitragemEnglish)
+[Español](https://t.me/bitragemSpanish)
 
 ## Patrocinadores
 Tiago A Boaventura - 28/05/2019
