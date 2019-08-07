@@ -1,102 +1,133 @@
-# Stablecoins-Infinity-Profit-Bot
-Antigo TUSD-USDT Infinity Profit Bot
+Como funciona:
 
-- [English](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.en.md)
-- [Español - no completado](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/blob/master/README.es.md)
+O bot trabalha com stablecoins dentro da Binance, comprando e vendendo dentro de uma variação que os pares
+de stable coins possuem. A estratégia consiste nos seguintes passos
 
-## Funcionamento
+Dividir o capital que o bot vai trabalhar em duas partes em cada par de stable coin:
 
-É bem simples. O Bot se aproveita das pequenas variações entre as stablecoins. Em cada negociação, você ganha um pouco mais do que as taxas da Binance. Cada trade é mais lucrativo que o anterior.
+50% USDT
+50% USDC
 
-O melhor? Nenhum risco de perder dinheiro! Nós só podemos ganhar!
+Recomendo pares com maior volume dentro da exchange
 
-## Instalação
+Lembrando sempre importante um saldo em BNB para economizar nas taxas
 
-1. Baixe a útlima [release](https://github.com/itxtoledo/Stablecoins-Infinity-Profit-Bot/releases), descompacte e edite o arquivo config.json inserindo sua API key e Secret key da Binance.
-    - Insira qual par o Bot irá operar, em *MARKET* coloque o ID do mercado como está na Binance, em nosso exemplo iremos definir USDT.
-    - Insira a moeda do mercado que você irá operar, no exemplo abaixo estamos definindo TUSD como *CURRENCY*.
-    - Escolha qual será o seu *SPREAD_BUY* e *SPREAD_SELL*, usaremos aqui o padrão.
-    - Escolha o *MAX_ASK*, aqui você define o valor máximo para o Bot efetuar a compra de um ativo.
-    - *INITIAL_INVESTMENT*, como o próprio nome diz, deve ser o valor que você alocou na moeda definida em *MARKET* para iniciar o Bot.
-    - Agora se você deseja executar esse Bot em um servidor, a chave *LISTEN_PORT* é muito importante, por padrão aqui vem setado em 3333.
+A estratégia consiste nos seguintes passos:
 
-```bash
-{
-    "API_KEY": "your_api_key",
-    "SECRET_KEY": "your_secret_key",
-    "CURRENCY": "TUSD",
+Avaliação do spread:
+
+Por padrao o bot trabalha com spread de 0.00150 (isso significa 0.15%) de diferença para baixo
+de compra e 0.15% de venda acima de acordo com o preço atual do mercado, atendendo as seguintes regras:
+
+Verificação da última ordem de compra e venda: Ele busca na exchange a última ordem de compra e venda
+para vender dentro do spread definido, vendendo acima do valor de compra + spread e comprando abaixo + valor do spread
+
+Timeout das ordens: Depois de um tempo definido na variável ORDER_EXPIRE ele cancela a ordem de compra ou venda
+tentando recolocar a ordem em um valor favorável dentro da condição de mercado, por exemplo, a volatilidade 
+do mercado diminuiu ele vai buscar valores mais próximos do que o mercado oferece
+
+Ajuste automático do spread: É possível ajustar o spread através da variável AUTO_SPREAD inserindo valor 1
+para que seja dinamico. Ele vai calcular entre a máxima e a mínima diária um valor de variação suficiente
+para buscar um lucro, desde que não seja menor que o valor de SPREAD_MIN. Caso o valor AUTO_SPREAD seja 0, 
+o bot vai considerar os valores SPREAD_SELL e SPREAD_BUY para venda e compra
+
+Ordens escalonadas: O bot trabalha com ordens escalonadas, então é importante definir dentro do valor
+que cada par trabalha uma porcentagem para compra e venda dentro da variável BUY_VALUE. Por exemplo, caso seja
+definido 25%, ele vai utilizar 25% dos 50% do capital alocado para aquele par, buscando vender por um valor maior 
+sempre que a moeda subir e comprando sempre ela que ela cair.
+
+Informações importantes:
+
+Ordens de compra e venda: Elas são separadas, porém sempre que uma ordem de compra ou venda é executada, a ordem
+do sentido contrário é cancelada e ajustada para que seja comprado ou vendido dentro do spread de mercado, então
+vamos usar o exemplo abaixo:
+	
+	- o Bot vendeu TUSD a um valor de 1.005, neste caso a ação será a seguinte
+		1. Cancelar a ordem de compra de TUSD
+		2. Ajustar a ordem de compra de TUSD, dentro do spread de mercado, abaixo do valor de compra
+		3. Ajustar uma nova ordem de venda, dentro do spread de mercado, acima do valor vendido
+		
+	- O Bot comprou TUSD a um valor de 0.980 neste caso a ação será a seguinte
+		1. Cancelar a ordem de venda de TUSD
+		2. Ajustar a ordem de venda de TUSD, dentro do spread de mercado, acima do valor de compra
+		3. Ajustar uma nova ordem de compra, dentro do spread de mercado, abaixo do valor comprado.
+	
+	A ação vai se repetir x vezes dependendo da variação de mercado e do saldo disponível.
+	
+	
+Abaixo a documentação dos paramentros de configuração
+
+    "API_KEY": "",
+    "SECRET_KEY": "",
+    
+    São as API e Secret Key geradas na binance para acesso a sua conta
+    
+    "CURRENCY": "USDC",
     "MARKET" : "USDT",
-    "SPREAD_SELL" : 0.00100,
+    
+    Define-se acima o par em qual o bot vai trabalhar, neste caso USDC/USDT
+    
+     "AUTO_SPREAD" : 1,
+     
+     Define-se se o bot vai trabalhar com spread dinamico ou fixo (1 automatico, 0 fixo)
+        
+    "SPREAD_SELL" : 0.00150,
     "SPREAD_BUY" : 0.00150,
+    
+    Quando o auto_spread estiver 0, define-se o spread de compra e venda para operação 
+    
+    
+    "SPREAD_MIN" : 0.00150,
+    
+    Define-se o spread mínimo para operação, quando utilizado o AUTO_SPREAD com valor 1. 
+       
+    
+    "ORDER_EXPIRE" : 8,
+    
+    Define um tempo de timeout para as ordens de compra e venda, utilizado quando o mercado
+    não está buscando os valores de compra e venda, o bot tenta posicionar de modo mais favorável as ordens.
+    Utilize um número em horas para definir ou deixe 0 para desabilitar
+   
+    "BUY_VALUE" : 25,
+    
+    Valor de compra para o bot. Essa é uma porcentagem para operação de compra e venda. A porcentagem é calculada
+    com base no saldo de TODOS os pares de Stable coin baseados em dólar (USDT, USDC, PAX, etc..).    
+    
+    
     "LOOP_TIME": 15,
-    "MAX_ASK": 1,
-    "INITIAL_INVESTMENT": 20,
-    "LISTEN_PORT" : 3333
-}
-```
+    
+    Define o período de tempo em que o bot vai verificar a exchange.
+    
+    "BOT_TOKEN": "",
+    
+    Bot Token é a api para envio de mensagens via telegram. Esse bot pode ser criado diretamente 
+    no telegram chamando o botfather, digitando o comando /newbot. Não
+    vamos auxiliar neste passo, recomendamos que verifique no Google caso tenha dúvidas. Deixando
+    o valor em branco o bot assume que não deve usar o telegram.
+    
+    "BOT_CHAT": "",
+    
+    Este é o seu ID, para quem o bot vai enviar mensagem. Para obter essa informação busque no telegram 
+    por get id e digite /my_id. Não vamos auxiliar neste passo, recomendamos que verifique no google caso 
+    tenha dúvidas. Deixando em branco o bot assume que não deve usar o telegram.
+      
+    "INITIAL_INVESTMENT": 1467.75,
+    
+    Este é valor de investimento no bot. Este valor, para um cálculo correto, deve somar todo o valor
+    em stable coins na exchange (USDT, USDC, PAX, etc..). 
+    
+    
+    "LISTEN_PORT" : 80,
+    
+    Porta da consulta da API
+    
+	"LISTEN_REPORT" : 3000
+	
+	Em desenvolvimento: Será desenvolvido um relatório para o bot.
+	
 
-2. Instale o NodeJS: https://nodejs.org/en/
-Obs.: No desenvolvimento e testes foram utilizadas as seguintes versões:
-```
-Node v12.5.0
-NPM 6.9.0
-```
-3. Vá para a pasta bot com o terminal e execute
 
-```bash
-npm install
-```
+	
 
-## Utilização
 
-1. Ter mais de US $20 em sua conta da Binance na moeda do mercado selecionado. 
 
-Nota:
-
-No arquivo config.json você encontrará o mercado USDT, caso queira negociar neste mercado você deverá comprar Tether antes de ligar o BOT.
-
-2. Gere uma API, se não souber como se faz isso siga este tutorial: https://www.youtube.com/watch?v=OdzjaE6O31E
-3. Coloque a API nos campos do arquivo config.json
-4. Cancele todas as ordens que estiverem abertas no par que você for negociar
-5. Inicie o BOT na pasta dele
-
-```bash
-  npm start
-```
-
-6. Seja paciente e espere seu saldo na moeda definida em *MARKET* aumentar
-
-## Observações
-Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso só instale a versão em desenvolvimento se souber o que está fazendo.
-
-O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta acessar o IP do seu servidor e a porta definida no arquivo de configurações. Caso esteja executando localmente, para acessar a api o caminho seria como algo assim:
-```bash
-  localhost:3333
-```
-## Créditos
-1. Ideia [@usdkhey](https://github.com/usdkhey)
-2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
-
-## Comunidade
-Participe de nossas comunidades no Telegram:
-[Português](https://t.me/bitragem)
-[English](https://t.me/bitragemEnglish)
-[Español](https://t.me/bitragemSpanish)
-
-## Patrocinadores
-Tiago A Boaventura - 28/05/2019
-
-## Contribua com o projeto
-```bash
-  USDS: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
-  USDC: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
-  TUSD: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
-  USDT: 1Ed87MBpJHc23eytYYRp6uP9H831Qtcwek
-  BTC: 1GzbMuVjhHLibL9fvayfE5UUWg4enKTVR3
-  LTC: LgJpDPgM3friu848oZnAMM9iVfX8TBLWhF
-  ETH: 0x349d3038f6384fe5bdf18ba3bb38cb5f8ef86949
-  DASH: Xwb4bKtbuLXsbfAtvbe6VCq5hmQJKA2tmF
-```
-
-## Licença
-[MIT](https://choosealicense.com/licenses/mit/)
