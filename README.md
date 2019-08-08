@@ -138,6 +138,7 @@ O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta a
 ## Créditos
 1. Ideia [@usdkhey](https://github.com/usdkhey)
 2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
+3. Versão 4.0.0 [@vinibr81](https://github.com/vinibr81)
 
 ## Comunidade
 Participe de nossa comunidade no [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
