@@ -1,5 +1,8 @@
-Como funciona:
 
+# Stablecoins-Infinity-Profit-Bot
+Old TUSD-USDT Infinity Profit Bot
+
+## Funcionamento
 O bot trabalha com stablecoins dentro da Binance, comprando e vendendo dentro de uma variação que os pares
 de stable coins possuem. A estratégia consiste nos seguintes passos
 
@@ -8,7 +11,7 @@ Dividir o capital que o bot vai trabalhar em duas partes em cada par de stable c
 50% USDT
 50% USDC
 
-Recomendo pares com maior volume dentro da exchange
+Recomendamos pares com maior volume dentro da exchange
 
 Lembrando sempre importante um saldo em BNB para economizar nas taxas
 
@@ -125,9 +128,23 @@ Abaixo a documentação dos paramentros de configuração
 	
 	Em desenvolvimento: Será desenvolvido um relatório para o bot.
 	
+## Observações
+Estamos atualizando frequentemente o BOT, perdas podem ocorrer, por isso só instale a versão em desenvolvimento se souber o que está fazendo.
 
+O Bot possui uma API para consulta dos dados em tempo real. Para usá-la basta acessar o IP do seu servidor e a porta definida no arquivo de configurações. Caso esteja executando localmente, para acessar a api o caminho seria como algo assim:
+```bash
+  localhost:3333
+```
+## Créditos
+1. Ideia [@usdkhey](https://github.com/usdkhey)
+2. Algorítmo [@itxtoledo](https://github.com/itxtoledo)
 
-	
+## Comunidade
+Participe de nossa comunidade no [WhatsApp](https://chat.whatsapp.com/KxB0etimVPQL3ncEn8u7tO)
+ou no [Telegram](https://t.me/bitragem).
 
+## Patrocinadores
+Tiago A Boaventura - 28/05/2019
 
-
+## Licença
+[MIT](https://choosealicense.com/licenses/mit/)
