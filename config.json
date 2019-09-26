@@ -3,6 +3,7 @@
     "SECRET_KEY": "",
     "CURRENCY": "PAX",
     "MARKET" : "USDT",
+    "COINS" : ["TUSD", "USDT", "USDC", "USDC", "PAX", "USDS", "USDSB"],
     "SPREAD_SELL" : 0.00150,
     "SPREAD_BUY" : 0.00150,
     "BUY_MAX" : 0.9993,
@@ -12,8 +13,8 @@
     "BUY_VALUE" : 11,
     "SPREAD_MIN" : 0.00150,
     "LOOP_TIME": 15,
-    "BOT_TOKEN": "",
-    "BOT_CHAT": "",
+    "TELEGRAM_TOKEN": "",
+    "TELEGRAM_CHAT": "",
     "INITIAL_INVESTMENT": 2925.67,
     "LISTEN_PORT" : 82,
     "LISTEN_REPORT" : 3000

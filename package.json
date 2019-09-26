@@ -2,10 +2,10 @@
   "name": "stablecoins-infinity-profit-bot",
   "version": "1.0.0",
   "description": "Make infinity money with stablecoins",
-  "main": "main.js",
+  "main": "index.js",
   "repository": "github:itxtoledo/Stablecoins-Infinity-Profit-Bot",
   "scripts": {
-    "start": "node main.js"
+    "start": "node -r esm ./src/index.js"
   },
   "author": {
     "name": "Gustavo Toledo",

@@ -2,17 +2,17 @@ import config from "./config.json";
 import cron from "node-cron";
 import express from "express";
 import Binance from "binance-api-node";
+import { isInArray } from "./utils.js";
+import telegraf from 'telegraf';
 
-let coins = ["TUSD", "USDT", "USDC", "USDC", "PAX", "USDS", "USDSB"];
+let app = express();
 
 const client = Binance({
   apiKey: config.API_KEY,
   apiSecret: config.SECRET_KEY
 });
 
-if (config.BOT_TOKEN == "" && config.BOT_CHAT == "") {
-  bot_enabled = 0;
-} else {
+if (config.BOT_TOKEN != "" && config.BOT_CHAT != "") {
   const TelegramBot = require("node-telegram-bot-api");
   const TOKEN = config.BOT_TOKEN;
   var bot = new TelegramBot(TOKEN, { polling: true });
@@ -20,7 +20,7 @@ if (config.BOT_TOKEN == "" && config.BOT_CHAT == "") {
     config.BOT_CHAT,
     "\u{1F916} stablecoins-infinity-profit-bot iniciando"
   );
-  bot_enabled = 1;
+  botMemory.telegram = true;
 }
 
 client
@@ -98,7 +98,7 @@ var task = cron.schedule(
         maxDay = parseFloat(result.highPrice);
         spreadDay = parseFloat(maxDay - minDay).toFixed(4);
         spreadOpera = parseFloat(spreadDay / 4);
-        otherStables = 0;
+        botMemory.otherStables = 0;
         client
           .accountInfo({ useServerTime: true })
           .then(result => {
@@ -143,15 +143,13 @@ var task = cron.schedule(
               } else if (result.balances[i].asset == config.CURRENCY) {
                 currencyBalanceLocked = parseFloat(result.balances[i].locked);
                 currencyBalanceFree = parseFloat(result.balances[i].free);
-              } else if (coins.iOf(result.balances[i].asset) > -1) {
+              } else if (isInArray(config.COINS, result.balances[i].asset)) {
                 if (
                   result.balances[i].asset != config.MARKET &&
                   result.balances[i].asset != config.CURRENCY
                 ) {
-                  let otherCoinsLocked = parseFloat(result.balances[i].locked);
-                  let otherCoinsFree = parseFloat(result.balances[i].free);
-                  otherStables =
-                    otherStables + (otherCoinsLocked + otherCoinsFree);
+                  botMemory.botMemory.otherStables =
+                    botMemory.otherStables + (parseFloat(result.balances[i].locked) + parseFloat(result.balances[i].free));
                 }
               }
             }
@@ -161,7 +159,7 @@ var task = cron.schedule(
               marketBalanceFree +
               currencyBalanceLocked +
               currencyBalanceFree +
-              otherStables
+              botMemory.botMemory.otherStables
             ).toFixed(8);
 
             if (marketBalanceLocked + marketBalanceFree < total / 2) {
@@ -206,7 +204,7 @@ var task = cron.schedule(
               "SALDO " + config.CURRENCY + "...:",
               currencyBalanceLocked + currencyBalanceFree
             );
-            console.log("OUTRAS STALBE:", otherStables.toFixed(8));
+            console.log("OUTRAS STALBE:", botMemory.otherStables.toFixed(8));
             console.log("SALDO BNB....:", balanceBNB);
             console.log("SALDO TOTAL..:", total, "USD");
             console.log("AUTO SPREAD..:", status_spread);
@@ -504,7 +502,7 @@ function simpleStrategy() {
               if (
                 sellPriceTemp > avgPrice &&
                 sellPriceTemp - avgPrice >= spreadOpera &&
-                notifySellMin == 0
+                botMemory.notifySellMin == 0
               ) {
                 sellPrice = sellPriceTemp;
                 if (bot_enabled == 1) {
@@ -522,7 +520,7 @@ function simpleStrategy() {
                   );
                 }
               } else {
-                if (bot_enabled == 1 && notifySellMin == 0) {
+                if (bot_enabled == 1 && botMemory.notifySellMin == 0) {
                   bot.sendMessage(
                     config.BOT_CHAT,
                     "\u{2714} AVISO: A ordem de venda está dentro da diferença de spread " +
@@ -534,7 +532,7 @@ function simpleStrategy() {
                 }
               }
             } else {
-              if (bot_enabled == 1 && notifySellMin == 0) {
+              if (bot_enabled == 1 && botMemory.notifySellMin == 0) {
                 bot.sendMessage(
                   config.BOT_CHAT,
                   "\u{2714} AVISO: A ordem de venda está dentro da diferença de spread " +
@@ -568,7 +566,7 @@ function simpleStrategy() {
               if (
                 buyPriceTemp < avgPrice &&
                 avgPrice - buyPriceTemp >= spreadOpera &&
-                notifyBuyMax == 0
+                botMemory.notifyBuyMax == 0
               ) {
                 buyPrice = buyPriceTemp;
                 if (bot_enabled == 1) {
@@ -586,7 +584,7 @@ function simpleStrategy() {
                   );
                 }
               } else {
-                if (bot_enabled == 1 && notifyBuyMax == 0) {
+                if (bot_enabled == 1 && botMemory.notifyBuyMax == 0) {
                   bot.sendMessage(
                     config.BOT_CHAT,
                     "\u{2714} AVISO: A ordem de compra está dentro da diferença de spread " +
@@ -598,7 +596,7 @@ function simpleStrategy() {
                 }
               }
             } else {
-              if (bot_enabled == 1 && notifyBuyMax == 0) {
+              if (bot_enabled == 1 && botMemory.notifyBuyMax == 0) {
                 bot.sendMessage(
                   config.BOT_CHAT,
                   "\u{2714} AVISO: A ordem de compra está dentro da diferença de spread " +
@@ -621,19 +619,22 @@ function simpleStrategy() {
       console.log(
         "DEFINIDOS....: Compra " + buyPrice + " e Venda " + sellPrice
       );
-      console.log("TIMEOUT ORDEM:" + " " + config.ORDER_EXPIRE + " horas");
-      console.log("HORA AGORA...:" + " " + new Date());
-      console.log("============== DADOS DE COMPRA ============");
-      console.log("VALOR COMPRA.:", buyAmount);
-      console.log("PRECO COMPRA.:", parseFloat(buyPriceTemp).toFixed(4));
-      console.log("ID ORDEM BUY.:", OrderBuyID);
-      console.log("EXPIRA EM....:", new Date(dateOrderBuyExpire));
-      console.log("============== DADOS DE VENDA =============");
-      console.log("VALOR VENDA..:", sellAmount);
-      console.log("PRECO VENDA..:", parseFloat(sellPriceTemp).toFixed(4));
-      console.log("ID ORDEM SELL:", OrderSellID);
-      console.log("EXPIRA EM....:", new Date(dateOrderSellExpire));
-      console.log("===========================================");
+      
+      let mess = `
+      TIMEOUT ORDERM: ${config.ORDER_EXPIRE} horas \n
+      HORA ATUAL....: ${new Date()}\n
+      ============== DADOS DE COMPRA ============\n
+      VALOR COMPRA..: ${botMemory.buyAmount}\n
+      PRECO COMPRA..: ${parseFloat(botMemory.buyPriceTemp).toFixed(4)}\n
+      ID ORDEM BUY..: ${OrderBuyID}\n
+      EXPIRA EM.....: ${new Date(dateOrderBuyExpire)}\n
+      "============== DADOS DE VENDA =============\n
+      VALOR VENDA...: ${sellAmount}\n
+      PRECO VENDA...: ${parseFloat(sellPriceTemp).toFixed(4)}\n
+      ID ORDEM SELL.: ${OrderSellID}\n
+      EXPIRA EM.....: ${new Date(dateOrderSellExpire)}
+      ===========================================`;
+      console.log(mess);
       client
         .openOrders({
           symbol: config.CURRENCY + config.MARKET
@@ -664,7 +665,7 @@ function simpleStrategy() {
                   totalCompras--;
                   throw err;
                 });
-              notifyBuyMax = 0;
+              botMemory.notifyBuyMax = 0;
               hasFundsBuy = 1;
               buyPriceTemp = buyPrice;
               if (bot_enabled == 1) {
@@ -682,7 +683,7 @@ function simpleStrategy() {
             } else {
               if (
                 bot_enabled == 1 &&
-                notifyBuyMax == 0 &&
+                botMemory.notifyBuyMax == 0 &&
                 marketBalanceFree >= buyAmount
               ) {
                 bot.sendMessage(
@@ -691,9 +692,9 @@ function simpleStrategy() {
                     config.BUY_MAX +
                     ". O bot vai aguardar o preço reduzir até o valor definido para evitar prejuízos."
                 );
-                notifyBuyMax = 1;
+                botMemory.notifyBuyMax = 1;
               }
-              if (bot_enabled == 1 && hasFundsBuy == 1 && notifyBuyMax == 0) {
+              if (bot_enabled == 1 && hasFundsBuy == 1 && botMemory.notifyBuyMax == 0) {
                 bot.sendMessage(
                   config.BOT_CHAT,
                   "\u{1F6AB} O bot está sem saldo para compras em " +
@@ -702,7 +703,7 @@ function simpleStrategy() {
                     marketBalanceFree +
                     ". O bot vai aguardar até que uma compra seja executada para liberar saldo."
                 );
-                notifyBuyMax = 1;
+                botMemory.notifyBuyMax = 1;
               }
               OrderBuyID = 0;
               hasFundsBuy = 0;
@@ -737,7 +738,7 @@ function simpleStrategy() {
                   totalVendas--;
                   throw err;
                 });
-              notifySellMin = 0;
+              botMemory.notifySellMin = 0;
               hasFundsSell = 1;
               sellPriceTemp = sellPrice;
               if (bot_enabled == 1) {
@@ -755,7 +756,7 @@ function simpleStrategy() {
             } else {
               if (
                 bot_enabled == 1 &&
-                notifySellMin == 0 &&
+                botMemory.notifySellMin == 0 &&
                 currencyBalanceFree >= sellAmount
               ) {
                 bot.sendMessage(
@@ -764,9 +765,9 @@ function simpleStrategy() {
                     config.SELL_MIN +
                     ". O bot vai aguardar o preço aumentar até o valor definido para evitar prejuízos."
                 );
-                notifySellMin = 1;
+                botMemory.notifySellMin = 1;
               }
-              if (bot_enabled == 1 && hasFundsSell == 1 && notifySellMin == 0) {
+              if (bot_enabled == 1 && hasFundsSell == 1 && botMemory.notifySellMin == 0) {
                 bot.sendMessage(
                   config.BOT_CHAT,
                   "\u{1F6AB} O bot está sem saldo para vendas em " +
@@ -775,7 +776,7 @@ function simpleStrategy() {
                     currencyBalanceFree +
                     ". O bot vai aguardar até que uma compra seja executada para liberar saldo."
                 );
-                notifySellMin = 1;
+                botMemory.notifySellMin = 1;
               }
               OrderSellID = 0;
               hasFundsSell = 0;
@@ -831,15 +832,16 @@ let botMemory = {
   saldo_PAX: 0,
   saldo_USDS: 0,
   saldo_USDSB: 0,
-  total_stable: 0
+  total_stable: 0,
+  telegram = false
 };
 
 console.log("Iniciando...");
 
 task.start();
 
-app.get("/", (req, res) => {
-  let total_investiment = (total - config.INITIAL_INVESTMENT).toFixed(8);
+app.get("/*", (req, res) => {
+  let total_investiment = (botMemory.total - config.INITIAL_INVESTMENT).toFixed(8);
   res.json({
     initialInvestment: config.INITIAL_INVESTMENT,
     market: config.MARKET,
