@@ -1,5 +1,6 @@
-
 # Stablecoins-Infinity-Profit-Bot
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGuillerbr%2FStablecoins-Infinity-Profit-Bot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FGuillerbr%2FStablecoins-Infinity-Profit-Bot?ref=badge_shield)
+
 Old TUSD-USDT Infinity Profit Bot
 
 ## Funcionamento
@@ -149,3 +150,7 @@ Tiago A Boaventura - 28/05/2019
 
 ## Licença
 [MIT](https://choosealicense.com/licenses/mit/)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FGuillerbr%2FStablecoins-Infinity-Profit-Bot.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FGuillerbr%2FStablecoins-Infinity-Profit-Bot?ref=badge_large)
