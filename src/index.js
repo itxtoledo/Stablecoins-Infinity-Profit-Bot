@@ -3,52 +3,11 @@ import cron from "node-cron";
 import express from "express";
 import Binance from "binance-api-node";
 import Telegraf from "telegraf";
+import botMemory from "./botMemory.js";
 
 const app = express();
 
 let tgBot = null;
-
-const botMemory = {
-  notifyBuyMax: 0,
-  notifySellMin: 0,
-  otherStables: 0,
-  hasFundsBuy: true,
-  hasFundsSell: true,
-  countExpireBuy: 0,
-  countExpireSell: 0,
-  dateOrderBuy: 0,
-  dateOrderBuyExpire: 0,
-  dateOrderSell: 0,
-  dateOrderSellExpire: 0,
-  buyPriceTemp: 0,
-  sellPriceTemp: 0,
-  changePriceTemp: 0,
-  startTime: Date.now(),
-  avgPrice: 0,
-  OrderBuyID: 0,
-  filledBuyOrder: true,
-  filledSellOrder: true,
-  OrderSellID: 0,
-  SpreadTemp: 0,
-  totalBuys: 0,
-  totalSells: 0,
-  marketBalanceLocked: 0,
-  marketBalanceFree: 0,
-  currencyBalanceLocked: 0,
-  currencyBalanceFree: 0,
-  total: 0,
-  setAmount: 0,
-  setBuyOrder: 0,
-  balance_BNB: 0,
-  balance_TUSD: 0,
-  balance_USDT: 0,
-  balance_USDC: 0,
-  balance_PAX: 0,
-  balance_USDS: 0,
-  balance_USDSB: 0,
-  total_stable: 0,
-  telegram: false
-};
 
 const client = Binance({
   apiKey: config.API_KEY,
@@ -97,7 +56,7 @@ client
   });
 
 const task = cron.schedule(
-  "*/" + config.LOOP_TIME + " * * * * *",
+  `*/${config.LOOP_TIME} * * * * *`,
   () => {
     client
       .dailyStats({ symbol: config.CURRENCY + config.MARKET })
@@ -211,7 +170,7 @@ const task = cron.schedule(
                   100
                 ).toFixed(2);
               } else {
-                if (botMemory.setAmount == 0) {
+                if (!botMemory.settedAmount) {
                   botMemory.buyAmount = (
                     ((botMemory.marketBalanceLocked +
                       botMemory.marketBalanceFree) *
@@ -224,7 +183,7 @@ const task = cron.schedule(
                       config.BUY_VALUE) /
                     100
                   ).toFixed(2);
-                  botMemory.setAmount = 1;
+                  botMemory.settedAmount = true;
                 }
               }
             }
@@ -236,9 +195,8 @@ const task = cron.schedule(
             }
 
             console.clear();
-            let mess = "===========================================";
-
-            mess += `
+            console.log(`
+            ===========================================
             SALDO ${config.MARKET}...: ${botMemory.marketBalanceLocked +
               botMemory.marketBalanceFree}\n
             SALDO ${config.CURRENCY}...: ${botMemory.currencyBalanceLocked +
@@ -262,21 +220,14 @@ const task = cron.schedule(
                                100) /
                              config.INITIAL_INVESTMENT
                            ).toFixed(2)} %\n
-            ===========================================`;
-            console.log(mess);
-            console.log(
-              "UPTIME.......:",
-              ((Math.floor(+new Date() / 1000) - botMemory.startTime) / 3600).toFixed(2),
-              "horas"
-            );
-            console.log(
-              "ORDENS.......:",
-              "VENDAS: [",
-              botMemory.totalSells,
-              "] COMPRAS: [",
-              botMemory.totalBuys,
-              "]"
-            );
+            ===========================================
+            UPTIME.......: ${(
+              (Math.floor(+new Date() / 1000) - botMemory.startTime) /
+              3600
+            ).toFixed(2)} horas
+            ORDENS.......: VENDAS: [${botMemory.totalSells}] COMPRAS: [${
+              botMemory.totalBuys
+            }]`);
 
             simpleStrategy();
           })
@@ -351,9 +302,9 @@ function simpleStrategy() {
         orderId: botMemory.OrderSellID
       })
       .then(result => {
-        dateOrderSell = result.time;
+        botMemory.dateOrderSell = result.time;
         if (result.status == "FILLED") {
-          filledSellOrder = true;
+          botMemory.filledSellOrder = true;
           if (botMemory.telegram) {
             tgBot.telegram.sendMessage(
               config.BOT_CHAT,
@@ -366,15 +317,16 @@ function simpleStrategy() {
                 " " +
                 config.CURRENCY +
                 " " +
-                (botMemory.currencyBalanceLocked + currencyBalanceFree).toFixed(
-                  4
-                ) +
+                (
+                  botMemory.currencyBalanceLocked +
+                  botMemory.currencyBalanceFree
+                ).toFixed(4) +
                 " Lucro atual: " +
-                (total - config.INITIAL_INVESTMENT).toFixed(4) +
+                (botMemory.total - config.INITIAL_INVESTMENT).toFixed(4) +
                 " USD" +
                 " \u{1F4B0} " +
                 (
-                  ((total - config.INITIAL_INVESTMENT) * 100) /
+                  ((botMemory.total - config.INITIAL_INVESTMENT) * 100) /
                   config.INITIAL_INVESTMENT
                 ).toFixed(2) +
                 "%"
@@ -383,7 +335,7 @@ function simpleStrategy() {
           client
             .cancelOrder({
               symbol: config.CURRENCY + config.MARKET,
-              orderId: OrderBuyID
+              orderId: botMemory.OrderBuyID
             })
             .catch(err => {
               console.error(err);
@@ -391,12 +343,12 @@ function simpleStrategy() {
         }
 
         if (result.status == "CANCELED") {
-          filledSellOrder = true;
+          botMemory.filledSellOrder = true;
           if (botMemory.telegram) {
             tgBot.telegram.sendMessage(
               config.BOT_CHAT,
               "\u{1f6a8} Ordem de venda " +
-                OrderSellID +
+                botMemory.OrderSellID +
                 " cancelada na exchange, gerando uma nova ordem."
             );
           }
@@ -408,20 +360,22 @@ function simpleStrategy() {
   }
 
   if (config.ORDER_EXPIRE != 0) {
-    date = new Date(dateOrderBuy);
-    dateOrderBuyExpire = date.setHours(date.getHours() + config.ORDER_EXPIRE);
+    botMemory.date = new Date(botMemory.dateOrderBuy);
+    botMemory.dateOrderBuyExpire = botMemory.date.setHours(
+      botMemory.date.getHours() + config.ORDER_EXPIRE
+    );
     if (
-      dateOrderBuyExpire > 1546300800 &&
-      Date.now() > dateOrderBuyExpire &&
-      OrderBuyID != 0 &&
-      buyPriceTemp != 0 &&
-      countExpireBuy > 2
+      botMemory.dateOrderBuyExpire > 1546300800 &&
+      Date.now() > botMemory.dateOrderBuyExpire &&
+      botMemory.OrderBuyID != 0 &&
+      botMemory.buyPriceTemp != 0 &&
+      botMemory.countExpireBuy > 2
     ) {
       if (botMemory.telegram) {
         tgBot.telegram.sendMessage(
           config.BOT_CHAT,
           "\u{231b} A ordem de compra expirou em " +
-            new Date(dateOrderSellExpire) +
+            new Date(botMemory.dateOrderSellExpire) +
             " sem execução do mercado. Timeout em " +
             config.ORDER_EXPIRE +
             " horas. Será gerada uma nova ordem de compra para operação."
@@ -430,30 +384,32 @@ function simpleStrategy() {
       client
         .cancelOrder({
           symbol: config.CURRENCY + config.MARKET,
-          orderId: OrderBuyID
+          orderId: botMemory.OrderBuyID
         })
         .catch(err => {
           console.error(err);
         });
-      countExpireBuy = 0;
+      botMemory.countExpireBuy = 0;
     } else {
-      countExpireBuy++;
+      botMemory.countExpireBuy++;
     }
 
-    date = new Date(dateOrderSell);
-    dateOrderSellExpire = date.setHours(date.getHours() + config.ORDER_EXPIRE);
+    botMemory.date = new Date(botMemory.dateOrderSell);
+    botMemory.dateOrderSellExpire = botMemory.date.setHours(
+      botMemory.date.getHours() + config.ORDER_EXPIRE
+    );
     if (
-      dateOrderSellExpire > 1546300800 &&
-      Date.now() > dateOrderSellExpire &&
-      OrderSellID != 0 &&
-      sellPriceTemp != 0 &&
-      countExpireSell > 2
+      botMemory.dateOrderSellExpire > 1546300800 &&
+      Date.now() > botMemory.dateOrderSellExpire &&
+      botMemory.OrderSellID != 0 &&
+      botMemory.sellPriceTemp != 0 &&
+      botMemory.countExpireSell > 2
     ) {
       if (botMemory.telegram) {
         tgBot.telegram.sendMessage(
           config.BOT_CHAT,
           "\u{231b} A ordem de venda expirou em " +
-            new Date(dateOrderSellExpire) +
+            new Date(botMemory.dateOrderSellExpire) +
             " sem execução do mercado. Timeout em " +
             config.ORDER_EXPIRE +
             " horas. Será gerada uma nova ordem de venda para operação."
@@ -462,54 +418,69 @@ function simpleStrategy() {
       client
         .cancelOrder({
           symbol: config.CURRENCY + config.MARKET,
-          orderId: OrderSellID
+          orderId: botMemory.OrderSellID
         })
         .catch(err => {
           console.error(err);
         });
-      countExpireSell = 0;
+      botMemory.countExpireSell = 0;
     } else {
-      countExpireSell++;
+      botMemory.countExpireSell++;
     }
   }
 
   if (
     config.AUTO_SPREAD &&
-    SpreadTemp != 0 &&
-    SpreadTemp != spreadOpera &&
-    spreadOpera >= config.SPREAD_MIN
+    botMemory.SpreadTemp != 0 &&
+    botMemory.SpreadTemp != botMemory.spreadOpera &&
+    botMemory.spreadOpera >= config.SPREAD_MIN
   ) {
     if (botMemory.telegram) {
       tgBot.telegram.sendMessage(
         config.BOT_CHAT,
         "\u{1f6a7} Ajuste no spread de mercado de " +
-          SpreadTemp +
+          botMemory.SpreadTemp +
           " para " +
-          spreadOpera +
+          botMemory.spreadOpera +
           " para variação de " +
-          changePrice +
+          botMemory.changePrice +
           " %. As próximas ordens vão utilizar esta margem."
       );
     }
   }
-  SpreadTemp = spreadOpera;
-  changePriceTemp = changePrice;
+  botMemory.SpreadTemp = botMemory.spreadOpera;
+  botMemory.changePriceTemp = botMemory.changePrice;
 
   if (config.AUTO_SPREAD) {
     if (
-      (OrderSellID == 0 && OrderBuyID == 0) ||
-      spreadOpera <= config.SPREAD_MIN
+      (botMemory.OrderSellID == 0 && botMemory.OrderBuyID == 0) ||
+      botMemory.spreadOpera <= config.SPREAD_MIN
     ) {
-      spreadOpera = config.SPREAD_MIN;
-      buyPrice = (avgPrice * (1 - spreadOpera)).toFixed(4);
-      sellPrice = (avgPrice * (1 + spreadOpera)).toFixed(4);
+      botMemory.spreadOpera = config.SPREAD_MIN;
+      botMemory.buyPrice = (
+        botMemory.avgPrice *
+        (1 - botMemory.spreadOpera)
+      ).toFixed(4);
+      botMemory.sellPrice = (
+        botMemory.avgPrice *
+        (1 + botMemory.spreadOpera)
+      ).toFixed(4);
     } else {
-      buyPrice = (avgPrice - spreadOpera).toFixed(4);
-      sellPrice = (avgPrice + spreadOpera).toFixed(4);
+      botMemory.buyPrice = (botMemory.avgPrice - botMemory.spreadOpera).toFixed(
+        4
+      );
+      botMemory.sellPrice = (
+        botMemory.avgPrice + botMemory.spreadOpera
+      ).toFixed(4);
     }
   } else {
-    buyPrice = (avgPrice * (1 - config.SPREAD_BUY)).toFixed(4);
-    sellPrice = (avgPrice * (1 + config.SPREAD_SELL)).toFixed(4);
+    botMemory.buyPrice = (botMemory.avgPrice * (1 - config.SPREAD_BUY)).toFixed(
+      4
+    );
+    botMemory.sellPrice = (
+      botMemory.avgPrice *
+      (1 + config.SPREAD_SELL)
+    ).toFixed(4);
   }
 
   client
@@ -517,47 +488,47 @@ function simpleStrategy() {
       symbol: config.CURRENCY + config.MARKET
     })
     .then(result => {
-      if (filledSellOrder) {
+      if (botMemory.filledSellOrder) {
         for (let i = result.length - 1; i > 1; i--) {
           if (
             result[i].isBuyer &&
-            filledSellOrder &&
-            currencyBalanceFree >= 20
+            botMemory.filledSellOrder &&
+            botMemory.currencyBalanceFree >= 20
           ) {
             if (
-              sellPrice - parseFloat(result[i].price).toFixed(4) <
-              spreadOpera
+              botMemory.sellPrice - parseFloat(result[i].price).toFixed(4) <
+              botMemory.spreadOpera
             ) {
               let sellPriceTemp = (
                 parseFloat(result[i].price).toFixed(4) *
-                (1 + spreadOpera)
+                (1 + botMemory.spreadOpera)
               ).toFixed(4);
               if (
-                sellPriceTemp > avgPrice &&
-                sellPriceTemp - avgPrice >= spreadOpera &&
-                botMemory.notifySellMin == 0
+                sellPriceTemp > botMemory.avgPrice &&
+                sellPriceTemp - botMemory.avgPrice >= botMemory.spreadOpera &&
+                !botMemory.notifySellMin
               ) {
-                sellPrice = sellPriceTemp;
+                botMemory.sellPrice = sellPriceTemp;
                 if (botMemory.telegram) {
                   tgBot.telegram.sendMessage(
                     config.BOT_CHAT,
                     "\u{2716} ALERTA: A ordem de venda está em um valor abaixo da diferença de spread " +
-                      spreadOpera +
+                      botMemory.spreadOpera +
                       " da última ordem de compra no valor de " +
                       parseFloat(result[i].price).toFixed(4) +
                       " comparado ao preço atual de mercado em " +
-                      avgPrice +
+                      botMemory.avgPrice +
                       ". Ela teve seu valor reajustado para: " +
-                      sellPrice +
+                      botMemory.sellPrice +
                       "."
                   );
                 }
               } else {
-                if (botMemory.telegram && botMemory.notifySellMin == 0) {
+                if (botMemory.telegram && !botMemory.notifySellMin) {
                   tgBot.telegram.sendMessage(
                     config.BOT_CHAT,
                     "\u{2714} AVISO: A ordem de venda está dentro da diferença de spread " +
-                      spreadOpera +
+                      botMemory.spreadOpera +
                       " da última ordem de compra no valor de " +
                       parseFloat(result[i].price).toFixed(4) +
                       ""
@@ -565,11 +536,11 @@ function simpleStrategy() {
                 }
               }
             } else {
-              if (botMemory.telegram && botMemory.notifySellMin == 0) {
+              if (botMemory.telegram && !botMemory.notifySellMin) {
                 tgBot.telegram.sendMessage(
                   config.BOT_CHAT,
                   "\u{2714} AVISO: A ordem de venda está dentro da diferença de spread " +
-                    spreadOpera +
+                    botMemory.spreadOpera +
                     " da última ordem de compra no valor de " +
                     parseFloat(result[i].price).toFixed(4) +
                     ""
@@ -581,47 +552,47 @@ function simpleStrategy() {
         }
       }
 
-      if (filledBuyOrder) {
+      if (botMemory.filledBuyOrder) {
         for (let i = result.length - 1; i > 1; i--) {
           if (
             !result[i].isBuyer &&
-            filledBuyOrder &&
+            botMemory.filledBuyOrder &&
             botMemory.marketBalanceFree >= 20
           ) {
             if (
-              buyPrice - parseFloat(result[i].price).toFixed(4) <
-              spreadOpera
+              botMemory.buyPrice - parseFloat(result[i].price).toFixed(4) <
+              botMemory.spreadOpera
             ) {
               let buyPriceTemp = (
                 parseFloat(result[i].price).toFixed(4) *
-                (1 - spreadOpera)
+                (1 - botMemory.spreadOpera)
               ).toFixed(4);
               if (
-                buyPriceTemp < avgPrice &&
-                avgPrice - buyPriceTemp >= spreadOpera &&
+                buyPriceTemp < botMemory.avgPrice &&
+                botMemory.avgPrice - buyPriceTemp >= botMemory.spreadOpera &&
                 botMemory.notifyBuyMax == 0
               ) {
-                buyPrice = buyPriceTemp;
+                botMemory.buyPrice = buyPriceTemp;
                 if (botMemory.telegram) {
                   tgBot.telegram.sendMessage(
                     config.BOT_CHAT,
-                    "\u{2716} ALERTA: A ordem de compra está em um valor abaixo da diferença de spread " +
-                      spreadOpera +
-                      " da última ordem de venda no valor de " +
-                      parseFloat(result[i].price).toFixed(4) +
-                      " comparado ao preço atual de mercado em " +
-                      avgPrice +
-                      ". Ela teve seu valor reajustado para: " +
-                      buyPrice +
-                      "."
+                    `\u{2716} ALERTA: A ordem de compra está em um valor abaixo da diferença de spread ${
+                      botMemory.spreadOpera
+                    } da última ordem de venda no valor de ${parseFloat(
+                      result[i].price
+                    ).toFixed(4)} comparado ao preço atual de mercado em ${
+                      botMemory.avgPrice
+                    }. Ela teve seu valor reajustado para: ${
+                      botMemory.buyPrice
+                    }.`
                   );
                 }
               } else {
-                if (botMemory.telegram && botMemory.notifyBuyMax == 0) {
+                if (botMemory.telegram && !botMemory.notifyBuyMax) {
                   tgBot.telegram.sendMessage(
                     config.BOT_CHAT,
                     "\u{2714} AVISO: A ordem de compra está dentro da diferença de spread " +
-                      spreadOpera +
+                      botMemory.spreadOpera +
                       " da última ordem de venda no valor de " +
                       parseFloat(result[i].price).toFixed(4) +
                       ""
@@ -629,11 +600,11 @@ function simpleStrategy() {
                 }
               }
             } else {
-              if (botMemory.telegram && botMemory.notifyBuyMax == 0) {
+              if (botMemory.telegram && !botMemory.notifyBuyMax) {
                 tgBot.telegram.sendMessage(
                   config.BOT_CHAT,
                   "\u{2714} AVISO: A ordem de compra está dentro da diferença de spread " +
-                    spreadOpera +
+                    botMemory.spreadOpera +
                     " da última ordem de venda no valor de " +
                     parseFloat(result[i].price).toFixed(4) +
                     ""
@@ -646,14 +617,8 @@ function simpleStrategy() {
       }
     });
 
-  client
-    .dailyStats({ symbol: "BTC" + config.MARKET })
-    .then(result => {
-      console.log(
-        "DEFINIDOS....: Compra " + botMemory.buyPrice + " e Venda " + botMemory.sellPrice
-      );
-
-      let mess = `
+  console.log(`
+      DEFINIDOS....: Compra ${botMemory.buyPrice} e Venda ${botMemory.sellPrice}
       TIMEOUT ORDERM: ${config.ORDER_EXPIRE} horas \n
       HORA ATUAL....: ${new Date()}\n
       ============== DADOS DE COMPRA ============\n
@@ -666,175 +631,163 @@ function simpleStrategy() {
       PRECO VENDA...: ${parseFloat(botMemory.sellPriceTemp).toFixed(4)}\n
       ID ORDEM SELL.: ${botMemory.OrderSellID}\n
       EXPIRA EM.....: ${new Date(botMemory.dateOrderSellExpire)}
-      ===========================================`;
-      console.log(mess);
-      client
-        .openOrders({
-          symbol: config.CURRENCY + config.MARKET
-        })
-        .then(() => {
-          if (botMemory.filledBuyOrder) {
-            if (
-              (botMemory.marketBalanceFree > 20 ||
-                botMemory.marketBalanceFree >= botMemory.buyAmount) &&
-                botMemory.buyPrice < config.BUY_MAX
-            ) {
-              if (
-                botMemory.marketBalanceFree > 20 &&
-                botMemory.marketBalanceFree <= botMemory.buyAmount
-              ) {
-                botMemory.buyAmount = parseFloat(botMemory.marketBalanceFree).toFixed(2);
-              }
-              client
-                .order({
-                  symbol: config.CURRENCY + config.MARKET,
-                  side: "BUY",
-                  quantity: botMemory.buyAmount,
-                  price: botMemory.buyPrice,
-                  useServerTime: true
-                })
-                .then(result => {
-                  botMemory.totalBuys++;
-                  botMemory.OrderBuyID = result.orderId;
-                  botMemory.filledBuyOrder = false;
-                })
-                .catch(err => {
-                  botMemory.totalBuys--;
-                  throw err;
-                });
-              botMemory.notifyBuyMax = 0;
-              botMemory.hasFundsBuy = 1;
-              botMemory.buyPriceTemp = botMemory.buyPrice;
-              if (botMemory.telegram) {
-                tgBot.telegram.sendMessage(
-                  config.BOT_CHAT,
-                  "\u{1F4C9} Order de compra criada com sucesso: Quantidade comprada: \u{1f4b5} " +
-                  botMemory.buyAmount +
-                    ", valor de compra: \u{1f3f7} " +
-                    botMemory.buyPrice +
-                    " utilizando spread em " +
-                    botMemory.spreadOpera +
-                    "."
-                );
-              }
-            } else {
-              if (
-                botMemory.telegram &&
-                botMemory.notifyBuyMax == 0 &&
-                botMemory.marketBalanceFree >= botMemory.buyAmount
-              ) {
-                tgBot.telegram.sendMessage(
-                  config.BOT_CHAT,
-                  "\u{274C} O valor de compra do mercado esta acima do definido em " +
-                    config.BUY_MAX +
-                    ". O bot vai aguardar o preço reduzir até o valor definido para evitar prejuízos."
-                );
-                botMemory.notifyBuyMax = 1;
-              }
-              if (
-                botMemory.telegram &&
-                botMemory.hasFundsBuy &&
-                botMemory.notifyBuyMax == 0
-              ) {
-                tgBot.telegram.sendMessage(
-                  config.BOT_CHAT,
-                  "\u{1F6AB} O bot está sem saldo para compras em " +
-                    config.MARKET +
-                    ". Seu saldo atual é: " +
-                    botMemory.marketBalanceFree +
-                    ". O bot vai aguardar até que uma compra seja executada para liberar saldo."
-                );
-                botMemory.notifyBuyMax = 1;
-              }
-              botMemory.OrderBuyID = 0;
-              botMemory.hasFundsBuy = false;
-            }
-          }
+      ===========================================`);
 
-          if (botMemory.filledSellOrder) {
-            if (
-              (botMemory.currencyBalanceFree > 20 || botMemory.currencyBalanceFree >= botMemory.sellAmount) &&
-              botMemory.sellPrice > config.SELL_MIN
-            ) {
-              if (
-                botMemory.currencyBalanceFree > 20 &&
-                botMemory.currencyBalanceFree <= botMemory.sellAmount
-              ) {
-                botMemory.sellAmount = parseFloat(botMemory.currencyBalanceFree).toFixed(2);
-              }
-              client
-                .order({
-                  symbol: config.CURRENCY + config.MARKET,
-                  side: "SELL",
-                  quantity: botMemory.sellAmount,
-                  price: botMemory.sellPrice,
-                  useServerTime: true
-                })
-                .then(result => {
-                  botMemory.totalSells++;
-                  botMemory.OrderSellID = result.orderId;
-                  botMemory.filledSellOrder = false;
-                })
-                .catch(err => {
-                  botMemory.totalSells--;
-                  throw err;
-                });
-              botMemory.notifySellMin = 0;
-              botMemory.hasFundsSell = 1;
-              botMemory.sellPriceTemp = botMemory.sellPrice;
-              if (botMemory.telegram) {
-                tgBot.telegram.sendMessage(
-                  config.BOT_CHAT,
-                  "\u{1F4C8} Order de venda criada com sucesso: Quantidade vendida: \u{1f4b5} " +
-                  botMemory.sellAmount +
-                    ", valor de venda: \u{1f3f7} " +
-                    botMemory.sellPrice +
-                    " utilizando spread em " +
-                    botMemory.spreadOpera +
-                    "."
-                );
-              }
-            } else {
-              if (
-                botMemory.telegram &&
-                botMemory.notifySellMin == 0 &&
-                botMemory.currencyBalanceFree >= botMemory.sellAmount
-              ) {
-                tgBot.telegram.sendMessage(
-                  config.BOT_CHAT,
-                  "\u{274C} O valor de venda do mercado esta abaixo do definido em " +
-                    config.SELL_MIN +
-                    ". O bot vai aguardar o preço aumentar até o valor definido para evitar prejuízos."
-                );
-                botMemory.notifySellMin = 1;
-              }
-              if (
-                botMemory.telegram &&
-                botMemory.hasFundsSell &&
-                botMemory.notifySellMin == 0
-              ) {
-                tgBot.telegram.sendMessage(
-                  config.BOT_CHAT,
-                  "\u{1F6AB} O bot está sem saldo para vendas em " +
-                    config.CURRENCY +
-                    ". Seu saldo atual é: " +
-                    botMemory.currencyBalanceFree +
-                    ". O bot vai aguardar até que uma compra seja executada para liberar saldo."
-                );
-                botMemory.notifySellMin = 1;
-              }
-              botMemory.OrderSellID = 0;
-              botMemory.hasFundsSell = 0;
-            }
-          }
+  if (botMemory.filledBuyOrder) {
+    if (
+      (botMemory.marketBalanceFree > 20 ||
+        botMemory.marketBalanceFree >= botMemory.buyAmount) &&
+      botMemory.buyPrice < config.BUY_MAX
+    ) {
+      if (
+        botMemory.marketBalanceFree > 20 &&
+        botMemory.marketBalanceFree <= botMemory.buyAmount
+      ) {
+        botMemory.buyAmount = parseFloat(botMemory.marketBalanceFree).toFixed(
+          2
+        );
+      }
+      client
+        .order({
+          symbol: config.CURRENCY + config.MARKET,
+          side: "BUY",
+          quantity: botMemory.buyAmount,
+          price: botMemory.buyPrice,
+          useServerTime: true
+        })
+        .then(result => {
+          botMemory.totalBuys++;
+          botMemory.OrderBuyID = result.orderId;
+          botMemory.filledBuyOrder = false;
         })
         .catch(err => {
+          botMemory.totalBuys--;
           throw err;
         });
-    })
-    .catch(err => {
-      throw err;
-    });
+      botMemory.notifyBuyMax = false;
+      botMemory.hasFundsBuy = true;
+      botMemory.buyPriceTemp = botMemory.buyPrice;
+      if (botMemory.telegram) {
+        tgBot.telegram.sendMessage(
+          config.BOT_CHAT,
+          "\u{1F4C9} Order de compra criada com sucesso: Quantidade comprada: \u{1f4b5} " +
+            botMemory.buyAmount +
+            ", valor de compra: \u{1f3f7} " +
+            botMemory.buyPrice +
+            " utilizando spread em " +
+            botMemory.spreadOpera +
+            "."
+        );
+      }
+    } else {
+      if (
+        botMemory.telegram &&
+        botMemory.notifyBuyMax == 0 &&
+        botMemory.marketBalanceFree >= botMemory.buyAmount
+      ) {
+        tgBot.telegram.sendMessage(
+          config.BOT_CHAT,
+          "\u{274C} O valor de compra do mercado esta acima do definido em " +
+            config.BUY_MAX +
+            ". O bot vai aguardar o preço reduzir até o valor definido para evitar prejuízos."
+        );
+        botMemory.notifyBuyMax = true;
+      }
+      if (
+        botMemory.telegram &&
+        botMemory.hasFundsBuy &&
+        botMemory.notifyBuyMax == 0
+      ) {
+        tgBot.telegram.sendMessage(
+          config.BOT_CHAT,
+          "\u{1F6AB} O bot está sem saldo para compras em " +
+            config.MARKET +
+            ". Seu saldo atual é: " +
+            botMemory.marketBalanceFree +
+            ". O bot vai aguardar até que uma compra seja executada para liberar saldo."
+        );
+        botMemory.notifyBuyMax = true;
+      }
+      botMemory.OrderBuyID = 0;
+      botMemory.hasFundsBuy = false;
+    }
+  }
+
+  if (botMemory.filledSellOrder) {
+    if (
+      (botMemory.currencyBalanceFree > 20 ||
+        botMemory.currencyBalanceFree >= botMemory.sellAmount) &&
+      botMemory.sellPrice > config.SELL_MIN
+    ) {
+      if (
+        botMemory.currencyBalanceFree > 20 &&
+        botMemory.currencyBalanceFree <= botMemory.sellAmount
+      ) {
+        botMemory.sellAmount = parseFloat(
+          botMemory.currencyBalanceFree
+        ).toFixed(2);
+      }
+      client
+        .order({
+          symbol: config.CURRENCY + config.MARKET,
+          side: "SELL",
+          quantity: botMemory.sellAmount,
+          price: botMemory.sellPrice,
+          useServerTime: true
+        })
+        .then(result => {
+          botMemory.totalSells++;
+          botMemory.OrderSellID = result.orderId;
+          botMemory.filledSellOrder = false;
+        })
+        .catch(err => {
+          botMemory.totalSells--;
+          throw err;
+        });
+      botMemory.notifySellMin = false;
+      botMemory.hasFundsSell = true;
+      botMemory.sellPriceTemp = botMemory.sellPrice;
+      if (botMemory.telegram) {
+        tgBot.telegram.sendMessage(
+          config.BOT_CHAT,
+          "\u{1F4C8} Order de venda criada com sucesso: Quantidade vendida: \u{1f4b5} " +
+            botMemory.sellAmount +
+            ", valor de venda: \u{1f3f7} " +
+            botMemory.sellPrice +
+            " utilizando spread em " +
+            botMemory.spreadOpera +
+            "."
+        );
+      }
+    } else {
+      if (
+        botMemory.telegram &&
+        !botMemory.notifySellMin &&
+        botMemory.currencyBalanceFree >= botMemory.sellAmount
+      ) {
+        tgBot.telegram.sendMessage(
+          config.BOT_CHAT,
+          "\u{274C} O valor de venda do mercado esta abaixo do definido em " +
+            config.SELL_MIN +
+            ". O bot vai aguardar o preço aumentar até o valor definido para evitar prejuízos."
+        );
+        botMemory.notifySellMin = true;
+      }
+      if (
+        botMemory.telegram &&
+        botMemory.hasFundsSell &&
+        !botMemory.notifySellMin
+      ) {
+        tgBot.telegram.sendMessage(
+          config.BOT_CHAT,
+          `\u{1F6AB} O bot está sem saldo para vendas em ${config.CURRENCY}. Seu saldo atual é: ${botMemory.currencyBalanceFree}. O bot vai aguardar até que uma compra seja executada para liberar saldo.`
+        );
+        botMemory.notifySellMin = true;
+      }
+      botMemory.OrderSellID = 0;
+      botMemory.hasFundsSell = 0;
+    }
+  }
 }
 
 console.clear();
