@@ -10,7 +10,7 @@ export default {
   SELL_MIN: 1.0,
   ORDER_EXPIRE: 24,
   AUTO_SPREAD: true,
-  BUY_VALUE: 11,
+  BUY_VALUE: 100,
   SPREAD_MIN: 0.0015,
   LOOP_TIME: 15,
   TELEGRAM_TOKEN: "",
