@@ -3,8 +3,7 @@ const adapter = new FileSync('db.json');
 const low = require('lowdb');
 const db = low(adapter);
 
-
-var config = require('./config.json');
+var config = require('./config.js/index.js');
 var http = require('http');
 var ip = '0.0.0.0';
 var port = config.LISTEN_REPORT;
@@ -12,12 +11,12 @@ var getJSON = require('get-json');
 var dateFormat = require('dateformat');
 var cron = require('node-cron');
 
-saldo_TUSD = 0;
-saldo_USDT = 0;
-saldo_USDC = 0;
-saldo_PAX = 0;
-saldo_USDS = 0;
-saldo_USDSB = 0;
+balance_TUSD = 0;
+balance_USDT = 0;
+balance_USDC = 0;
+balance_PAX = 0;
+balance_USDS = 0;
+balance_USDSB = 0;
 total_stable = 0;
 
 date = 0;
@@ -26,7 +25,7 @@ profit_day_percentage = 0;
 total_profit = 0;
 total_profit_percentage = 0;
 
-db.defaults({ reports: [], date: {}, saldo_USDT: {}, saldo_TUSD: {}, saldo_USDC: {}, saldo_PAX: {}, saldo_USDS: {}, saldo_USDSB: {}, profit_day: {}, profit_day_percentage: {}, total_profit: {}, total_profit_percentage: {}, id: 0 }).write();
+db.defaults({ reports: [], date: {}, balance_USDT: {}, balance_TUSD: {}, balance_USDC: {}, balance_PAX: {}, balance_USDS: {}, balance_USDSB: {}, profit_day: {}, profit_day_percentage: {}, total_profit: {}, total_profit_percentage: {}, id: 0 }).write();
 total_report = db.get('reports').size().value();
 if(total_report == 0) {
 		profit_day = total_profit; 
@@ -34,17 +33,17 @@ if(total_report == 0) {
 	    getJSON('http://localhost', function(error, response){
 			total_profit = parseFloat(response.profit['USD'], 8);
 			date = dateFormat(new Date(), "dd/mm/yyyy");
-			saldo_USDT = parseFloat(response.balances['usdt'], 8);
-			saldo_TUSD = parseFloat(response.balances['tusd'], 8);
-			saldo_USDC = parseFloat(response.balances['usdc'], 8);
-			saldo_PAX = parseFloat(response.balances['pax'], 8);
-			saldo_USDS = parseFloat(response.balances['usds'], 8);
-			saldo_USDSB = parseFloat(response.balances['usdsb'], 8);
+			balance_USDT = parseFloat(response.balances['usdt'], 8);
+			balance_TUSD = parseFloat(response.balances['tusd'], 8);
+			balance_USDC = parseFloat(response.balances['usdc'], 8);
+			balance_PAX = parseFloat(response.balances['pax'], 8);
+			balance_USDS = parseFloat(response.balances['usds'], 8);
+			balance_USDSB = parseFloat(response.balances['usdsb'], 8);
 			total_profit_percentage = response.profit['percent'].toFixed(2);
 			total_profit_percentage = parseFloat(total_profit_percentage);
 			profit_day = total_profit; 
 			profit_day_percentage = total_profit_percentage;
-			db.get('reports').push({ date: date, saldo_USDT: saldo_USDT, saldo_TUSD: saldo_TUSD, saldo_USDC: saldo_USDC, saldo_PAX: saldo_PAX, saldo_USDS: saldo_USDS, saldo_USDSB: saldo_USDSB, profit_day: profit_day, profit_day_percentage: profit_day_percentage, total_profit: total_profit, total_profit_percentage: total_profit_percentage, id: total_report}).write();
+			db.get('reports').push({ date: date, balance_USDT: balance_USDT, balance_TUSD: balance_TUSD, balance_USDC: balance_USDC, balance_PAX: balance_PAX, balance_USDS: balance_USDS, balance_USDSB: balance_USDSB, profit_day: profit_day, profit_day_percentage: profit_day_percentage, total_profit: total_profit, total_profit_percentage: total_profit_percentage, id: total_report}).write();
 			db.update('id', n => n + 1).write();
 		});
 }
@@ -55,12 +54,12 @@ var task = cron.schedule('0  0  *  *  *', () => {
 		total_profit = parseFloat(response.profit['USD'], 8);
 		date = dateFormat(new Date(), "dd/mm/yyyy");
 		
-		saldo_USDT = parseFloat(response.balances['usdt'], 8);
-		saldo_TUSD = parseFloat(response.balances['tusd'], 8);
-		saldo_USDC = parseFloat(response.balances['usdc'], 8);
-		saldo_PAX = parseFloat(response.balances['pax'], 8);
-		saldo_USDS = parseFloat(response.balances['usds'], 8);
-		saldo_USDSB = parseFloat(response.balances['usdsb'], 8);
+		balance_USDT = parseFloat(response.balances['usdt'], 8);
+		balance_TUSD = parseFloat(response.balances['tusd'], 8);
+		balance_USDC = parseFloat(response.balances['usdc'], 8);
+		balance_PAX = parseFloat(response.balances['pax'], 8);
+		balance_USDS = parseFloat(response.balances['usds'], 8);
+		balance_USDSB = parseFloat(response.balances['usdsb'], 8);
 		
 		total_profit_percentage = response.profit['percent'].toFixed(2);
 		total_profit_percentage = parseFloat(total_profit_percentage);
@@ -75,7 +74,7 @@ var task = cron.schedule('0  0  *  *  *', () => {
 		profit_day_percentage = Math.abs(profit_day_percentage);
 		profit_day_percentage = parseFloat(profit_day_percentage);
 		
-		db.get('reports').push({ date: date, saldo_USDT: saldo_USDT, saldo_TUSD: saldo_TUSD, saldo_USDC: saldo_USDC, saldo_PAX: saldo_PAX, saldo_USDS: saldo_USDS, saldo_USDSB: saldo_USDSB, profit_day: profit_day, profit_day_percentage: profit_day_percentage, total_profit: total_profit, total_profit_percentage: total_profit_percentage, id: total_report}).write();
+		db.get('reports').push({ date: date, balance_USDT: balance_USDT, balance_TUSD: balance_TUSD, balance_USDC: balance_USDC, balance_PAX: balance_PAX, balance_USDS: balance_USDS, balance_USDSB: balance_USDSB, profit_day: profit_day, profit_day_percentage: profit_day_percentage, total_profit: total_profit, total_profit_percentage: total_profit_percentage, id: total_report}).write();
 		db.update('id', n => n + 1).write();
 	});
 });
@@ -92,14 +91,14 @@ var server=http.createServer((function(request,response)
 	response.write('</head><body><p>&nbsp;<h1 align="center"> Stable Coin - Report</h1></p> <table width="350" border="1" class="tabelaum"> <tr> <td colspan="2" align="center"><strong>Balances</strong></td> </tr>');
 	var total_report = db.get('reports').size().value();
 	var result_report = db.get('reports').find({ id: (total_report - 1) }).value();
-	response.write('<tr> <td width="61">USDT</td><td width="208">&nbsp;'+result_report.saldo_USDT+'</td> </tr>');
-	response.write('<tr> <td width="61">PAX</td><td width="208">&nbsp;'+result_report.saldo_PAX+'</td> </tr>');
-	response.write('<tr> <td width="61">TUSD</td><td width="208">&nbsp;'+result_report.saldo_TUSD+'</td> </tr>');
-	response.write('<tr> <td width="61">USDC</td><td width="208">&nbsp;'+result_report.saldo_USDC+'</td> </tr>');
-	response.write('<tr> <td width="61">USDS</td><td width="208">&nbsp;'+result_report.saldo_USDS+'</td> </tr>');
-	response.write('<tr> <td width="61">USDSB</td><td width="208">&nbsp;'+result_report.saldo_USDSB+'</td> </tr>');
+	response.write('<tr> <td width="61">USDT</td><td width="208">&nbsp;'+result_report.balance_USDT+'</td> </tr>');
+	response.write('<tr> <td width="61">PAX</td><td width="208">&nbsp;'+result_report.balance_PAX+'</td> </tr>');
+	response.write('<tr> <td width="61">TUSD</td><td width="208">&nbsp;'+result_report.balance_TUSD+'</td> </tr>');
+	response.write('<tr> <td width="61">USDC</td><td width="208">&nbsp;'+result_report.balance_USDC+'</td> </tr>');
+	response.write('<tr> <td width="61">USDS</td><td width="208">&nbsp;'+result_report.balance_USDS+'</td> </tr>');
+	response.write('<tr> <td width="61">USDSB</td><td width="208">&nbsp;'+result_report.balance_USDSB+'</td> </tr>');
 	response.write('<tr> <td width="61"><strong>Initial Invest</strong></td><td width="208">&nbsp'+config.INITIAL_INVESTMENT+'</td>');
-	response.write('<tr> <td width="61"><strong>Total:</strong></td><td>&nbsp;'+(result_report.saldo_USDT + result_report.saldo_PAX + result_report.saldo_TUSD + result_report.saldo_USDC +  result_report.saldo_USDS + result_report.saldo_USDSB) +'</td></tr></table>');
+	response.write('<tr> <td width="61"><strong>Total:</strong></td><td>&nbsp;'+(result_report.balance_USDT + result_report.balance_PAX + result_report.balance_TUSD + result_report.balance_USDC +  result_report.balance_USDS + result_report.balance_USDSB) +'</td></tr></table>');
 	response.write('<table width="872" border="1" class="tabeladois"><tr><td width="103"><strong>Date</strong></td><td width="152"><strong>Profit Today USD</strong></td><td width="198"><strong>% Today</strong></td><td width="194"><strong>Total Profit</strong></td><td width="195"><strong>Total %</strong></td></tr>');
 	var result_report = db.get('reports').value();
 	for (let index = 0; index < result_report.length; index++) {		

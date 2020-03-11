@@ -2,10 +2,10 @@
   "name": "stablecoins-infinity-profit-bot",
   "version": "1.0.0",
   "description": "Make infinity money with stablecoins",
-  "main": "main.js",
+  "main": "index.js",
   "repository": "github:itxtoledo/Stablecoins-Infinity-Profit-Bot",
   "scripts": {
-    "start": "node main.js"
+    "start": "node -r esm ./src/index.js"
   },
   "author": {
     "name": "Gustavo Toledo",
@@ -16,12 +16,14 @@
   "dependencies": {
     "binance-api-node": "^0.9.2",
     "dateformat": "^3.0.3",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "get-json": "^1.0.1",
     "http": "0.0.0",
     "lowdb": "^1.0.0",
     "node-cron": "^2.0.3",
-    "node-telegram-bot-api": "^0.29.0"
+    "node-telegram-bot-api": "^0.29.0",
+    "telegraf": "^3.36.0"
   },
   "keywords": [
     "javascript",
@@ -31,5 +33,7 @@
     "tusd",
     "usdt"
   ],
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  }
 }
