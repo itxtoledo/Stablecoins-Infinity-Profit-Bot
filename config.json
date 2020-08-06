@@ -9,7 +9,7 @@
     "SELL_MIN" : 1.0000,  
     "ORDER_EXPIRE" : 24,
     "AUTO_SPREAD" : 1,
-    "BUY_VALUE" : 11,
+    "BUY_VALUE" : 100,
     "SPREAD_MIN" : 0.00150,
     "LOOP_TIME": 15,
     "BOT_TOKEN": "",
