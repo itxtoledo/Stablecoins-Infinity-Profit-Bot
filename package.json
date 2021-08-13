@@ -21,7 +21,7 @@
     "http": "0.0.0",
     "lowdb": "^1.0.0",
     "node-cron": "^2.0.3",
-    "node-telegram-bot-api": "^0.29.0"
+    "node-telegram-bot-api": "^0.52.0"
   },
   "keywords": [
     "javascript",
