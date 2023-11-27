@@ -14,14 +14,14 @@
   },
   "license": "MIT",
   "dependencies": {
-    "binance-api-node": "^0.9.2",
+    "binance-api-node": "^0.9.12",
     "dateformat": "^3.0.3",
     "express": "^4.17.1",
     "get-json": "^1.0.1",
     "http": "0.0.0",
     "lowdb": "^1.0.0",
     "node-cron": "^2.0.3",
-    "node-telegram-bot-api": "^0.52.0"
+    "node-telegram-bot-api": "^0.64.0"
   },
   "keywords": [
     "javascript",
